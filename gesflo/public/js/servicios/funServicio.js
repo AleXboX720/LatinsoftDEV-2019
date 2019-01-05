@@ -111,7 +111,8 @@ function existeServicio(codi_circu, codi_servi){
 }
 
 function serviciosPendientes(codi_circu, nume_movil, pate_movil){
-	var parametros = {'codi_circu' : codi_circu, 'nume_movil' : nume_movil, 'pate_movil' : pate_movil};
+	var fech_servi = new Date($('#fech_servi').val());
+	var parametros = {'codi_circu' : codi_circu, 'nume_movil' : nume_movil, 'pate_movil' : pate_movil, 'fech_servi' : fech_servi};
 
 	var url = 'servicios/pendientes';
 	var token = document.getElementsByName("_token"); 
