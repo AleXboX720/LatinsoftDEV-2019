@@ -424,11 +424,19 @@ class ServiciosController extends Controller
             $codi_circu = $request->codi_circu;
             $nume_movil = $request->nume_movil;
             $pate_movil = $request->pate_movil;
+            $fech_servi = $request->fech_servi;
+
+            $desde = strtotime('+0 day', strtotime($fech_servi));
+            $hasta = strtotime('+1 day', strtotime($fech_servi));
+            $desde = date('Y-m-d H:i:s', $desde);
+            $hasta = date('Y-m-d H:i:s', $hasta);
+
 
             $servicio = Servicio::
                         where('codi_circu', $codi_circu)
                         ->where('nume_movil', $nume_movil)
                         ->where('pate_movil', $pate_movil)
+                        ->whereBetween('inic_servi', [$desde, $hasta])
                         ->where('finalizado', 0)
                         ->limit(1)
                         ->get();

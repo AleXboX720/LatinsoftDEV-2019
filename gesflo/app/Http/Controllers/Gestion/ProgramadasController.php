@@ -79,9 +79,10 @@ class ProgramadasController extends Controller
         }
         unset($arribos);
 
-
+        $multado = false;
         if($totalMulta > 0)
         {
+            $multado = true;
             Multa::create([
                 'codi_servi' => $codi_servi,
                 'codi_circu' => $codi_circu,
@@ -91,17 +92,17 @@ class ProgramadasController extends Controller
                 'fech_multa' => date('Y-m-d', $codi_servi),
                 'user_modif' => \Auth::user()->docu_perso,
             ]);
-            Servicio::where('codi_servi', $codi_servi)
-                ->where('codi_circu', $codi_circu)
-                ->where('nume_movil', $nume_movil)
-                ->where('pate_movil', $pate_movil)
-                ->where('multado', false)
-                ->update(
-                [
-                    'multado'   => true,
-                    'procesar'  => false
-                ]);
         }
+        Servicio::where('codi_servi', $codi_servi)
+            ->where('codi_circu', $codi_circu)
+            ->where('nume_movil', $nume_movil)
+            ->where('pate_movil', $pate_movil)
+            ->where('multado', false)
+            ->update(
+            [
+                'multado'   => $multado,
+                'procesar'  => false
+            ]);
     }
 
     private function _calcularMulta($diferencia, $tolerancia)
