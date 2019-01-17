@@ -58,6 +58,10 @@ class MultasController extends Controller
                 }
 
                 Pago::create([
+                    'codi_servi' => $multas[0]['codi_servi'],
+                    'codi_circu' => $multas[0]['codi_circu'],
+                    'nume_movil' => $multas[0]['nume_movil'],
+
                     'tipo_pago'  => $this->_tipo_pago,
                     'nota_pago'  => strtoupper($nota_pago),
                     'pago_total' => $pago_total,

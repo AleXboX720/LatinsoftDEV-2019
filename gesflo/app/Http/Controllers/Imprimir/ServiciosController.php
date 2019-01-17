@@ -141,7 +141,7 @@ class ServiciosController extends ConfiguracionController
 			
 			$inic_servi = new \DateTime($servicio['inic_servi']);
 			$fech_servi = $inic_servi->format('d-m-Y');
-			$hora_servi = = $inic_servi->format('H:i');
+			$hora_servi = $inic_servi->format('H:i');
 			//$fech_servi = date("d-m-Y", strtotime($this->_zonaHoraria, $servicio['inic_servi']));
 			//$hora_servi = date("H:i", strtotime($this->_zonaHoraria, $servicio['inic_servi']));
 			

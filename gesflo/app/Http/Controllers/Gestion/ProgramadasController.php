@@ -31,8 +31,9 @@ class ProgramadasController extends Controller
         }
     }
 
-    private function _procesar($request)
+    private function _procesar(Request $request)
     {
+        //dd($request);
         $marcadas   = $request['marcadas'];
         $codi_servi = $request['codi_servi'];
         $codi_circu = $request['codi_circu'];

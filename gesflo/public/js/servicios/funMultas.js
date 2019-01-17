@@ -14,6 +14,13 @@ $(document).ready(function(){
 
   $('#modal_multa').on('hidden.bs.modal', function(){
     objMulta = null;
+    $('#total_ida').val(0);
+    $('#pagar_ida').val(0);
+    $('#total_regre').val(0);
+    $('#pagar_regre').val(0);
+    $('#desc_total').val(0);
+    $('#tota_pagar').val(0);
+    $('#nota_multa').val('');
   });
 });
 
@@ -95,22 +102,25 @@ function _cargarCampos(){
 }
 
 function calcularTotales(){
-  //total_infor = parseInt($('#total_ida').val()) + parseInt($('#total_regre').val());
-  //total_pagar = parseInt($('#pagar_ida').val()) + parseInt($('#pagar_regre').val());
-  //total_descu = parseInt(total_infor) - parseInt(total_pagar);
-  //$('#desc_total').val(total_descu);  
-  //$('#tota_pagar').val(total_pagar);
-
-
   var multas = objMulta.multas;
-  $.each(multas, function(i, multa){
-    console.dir(multa);
-  });
-  multas[0].tota_pagad = parseInt($('#pagar_ida').val());
-  multas[1].tota_pagad = parseInt($('#pagar_regre').val());
 
-  total_infor = multas[0].tota_multa + multas[1].tota_multa;
-  total_pagar = multas[0].tota_pagad + multas[1].tota_pagad;
+  total_infor = 0;
+  total_pagar = 0;
+  total_descu = 0;
+  $.each(multas, function(i, multa){
+    total_infor+= multa.tota_multa;
+
+    if(multa.codi_senti == 0){
+      total_pagar += parseInt($('#pagar_ida').val());
+      objMulta.multas[i].tota_pagad = parseInt($('#pagar_ida').val());
+    }
+    if(multa.codi_senti == 1){
+      total_pagar += parseInt($('#pagar_regre').val());
+      objMulta.multas[i].tota_pagad = parseInt($('#pagar_regre').val());
+    }
+  });
+  //multas[0].tota_pagad = parseInt($('#pagar_ida').val());
+  //multas[1].tota_pagad = parseInt($('#pagar_regre').val());
   total_descu = parseInt(total_infor) - parseInt(total_pagar);
   $('#desc_total').val(total_descu);  
   $('#tota_pagar').val(total_pagar);

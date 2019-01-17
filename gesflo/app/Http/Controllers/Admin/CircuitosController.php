@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use App\Modelos\Circuito;
+use App\Modelos\Ruta;
+
 use App\Modelos\Vistas\ViewListarCircuitos;
+use App\Modelos\Vistas\ViewListarPuntosControl;
 
 class CircuitosController extends Controller
 {
@@ -24,34 +28,51 @@ class CircuitosController extends Controller
         return view('administrador.circuitos.vista', compact('data'));
     }
 
-    public function create()
+    public function editar(Request $request)
     {
-        //
-    }
 
-    public function store(Request $request)
-    {
-        //
+        //$req = $this->detallarCircuito($request);
+        dd($request);
     }
-
-    public function show($id)
+    public function detallarCircuito(Request $request)
     {
-        //
-    }
+        if($request->ajax())
+        {
+            $codi_circu = $request->codi_circu;
+            try
+            {
+                $c = Circuito::where('codi_circu', $codi_circu)
+                            ->where('docu_empre', $this->_docu_empre)
+                            ->get();
+                
+                $r  = Ruta::where('codi_circu', $codi_circu)
+                            ->where('docu_empre', $this->_docu_empre)
+                            ->get();
+                $l = [];
+                foreach ($r as $ruta) {
+                    $codi_senti = $ruta['codi_senti'];
 
-    public function edit($id)
-    {
-        //
-    }
+                    $control = ViewListarPuntosControl::where('codi_circu', $codi_circu)
+                            ->where('docu_empre', $this->_docu_empre)
+                            ->where('codi_senti', $codi_senti)
+                            ->get();
+                    array_push($l, ['sentido' => $codi_senti, 'controles' => $control->toArray()]);
 
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    public function destroy($id)
-    {
-        //
+                }
+                /*
+                $l = ViewListarPuntosControl::where('codi_circu', $codi_circu)
+                            ->where('docu_empre', $this->_docu_empre)
+                            ->get();
+                */
+                return response()->json([
+                    'circuito'  => $c,
+                    'rutas'     => $r,
+                    'listado' => $l
+                ]);
+            } catch (\Exception $e){
+                return response('Algo salio mal...!!!', 500);
+            }
+        }
     }
 
     public function listarCircuitos(Request $request)
@@ -76,7 +97,6 @@ class CircuitosController extends Controller
             $lst = ViewListarCircuitos::
                         where('nomb_circu', 'LIKE', "%$nomb_circu%")
                         ->get();
-            //dd($lst->toArray());
             if($lst->count() > 0){
                 return response()->json([
                         'listado'   => $lst->toArray(),

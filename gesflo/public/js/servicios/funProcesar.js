@@ -1,6 +1,5 @@
 var lstIniciados = [];
 var lstServiciosProcesar = [];
-var lstXXX = [];
 
 $(document).ready(function(){
 	$('#btnProcesar').click(function(e){
@@ -37,9 +36,9 @@ $(document).ready(function(){
 
 function finalizarServicios(){
 	var url = 'servicios/finalizar';
-	var token = document.getElementsByName("_token");
+	var token = document.getElementsByName('_token');
 
-	var parametros = {"fech_servi" : fech_servicio, "codi_circu" : codi_circuito};
+	var parametros = {'fech_servi' : fech_servicio, 'codi_circu' : codi_circuito};
 
 	return $.ajax({
 		url: url,
@@ -67,9 +66,9 @@ function finalizarServicios(){
 
 function procesarServicios(){
 	var url = 'servicios/procesar';
-	var token = document.getElementsByName("_token");
+	var token = document.getElementsByName('_token');
 
-	var parametros = {"fech_servi" : fech_servicio, "codi_circu" : codi_circuito};
+	var parametros = {'fech_servi' : fech_servicio, 'codi_circu' : codi_circuito};
 
 	return $.ajax({
 		url: url,
@@ -100,10 +99,10 @@ function procesarServicios(){
 
 function listarExpediciones2(servicio){
 	var url = 'listar/expediciones';
-	var token = document.getElementsByName("_token"); 
+	var token = document.getElementsByName('_token');
 
 
-	var parametros = {"servicio" : servicio};
+	var parametros = {'servicio' : servicio};
 	return $.ajax({
       url: url,
       headers : {'X-CSRF-TOKEN' : token[0].value},
@@ -127,7 +126,7 @@ function listarExpediciones2(servicio){
 
 function listarArribos(expedicion){
 	var url = 'listar/arribos';
-	var token = document.getElementsByName("_token");
+	var token = document.getElementsByName('_token');
 	
 	var parametros = {'expedicion' : expedicion};
 	

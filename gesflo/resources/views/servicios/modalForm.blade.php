@@ -6,7 +6,7 @@
 				<h4 class="modal-title" id="myModalLabel">Datos del Servicio</h4>
 			</div>
 			<div class="modal-body">
-				{!! Form::open(['route' => 'servicios.store', 'method' => 'POST', 'id' => 'frmAgregar']) !!}
+				{!! Form::open(['route' => 'registrar.servicio', 'method' => 'POST', 'id' => 'frmAgregar']) !!}
 				<div class="form-horizontal">
 				    <div class="form-group">
 				        <div class="hidden-sm hidden-xs col-md-2">

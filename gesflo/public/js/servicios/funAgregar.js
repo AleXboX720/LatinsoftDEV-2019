@@ -24,7 +24,12 @@ function guardarServicio(){
           
           return;
         } else {
-          crearServicio(objServicio);
+          var servicio = objServicio.servicio;
+          var conductor = objServicio.conductor;
+          var movil = objServicio.movil;
+          var programadas = objServicio.programadas;
+
+          crearServicio(servicio, conductor, movil, programadas);
           if($('#impr_servi').prop('checked')){
             setTimeout(function(){
               var busqueda = buscandoServicio(obj.codi_circu, obj.nume_movil, obj.pate_movil, obj.codi_servi);
@@ -65,21 +70,26 @@ function _definirServicio(){
   var expedicionPlus = false;
 
   var ulti_contr = 0;
-  $.each(lstPuntosControl, function(i, obj){
-    minu_contr += Math.round(obj.minu_contr * 60);
-    obj.fech_progr = codi_servi + minu_contr;
-    obj.fecha = new Date(obj.fech_progr * 1000).toISOString().slice(0,10);
-    obj.hora = new Date(obj.fech_progr * 1000).toLocaleTimeString().slice(0,5);
-    obj.codi_servi = codi_servi;
-		obj.nume_movil = objMovil.nume_movil;
-    lstProgramadas.push(obj);
+  $.each(lstPuntosControl, function(i, lst){
+    var sentido = lst.sentido;
+    $.each(lst.controles, function(i, obj){
+      minu_contr += Math.round(obj.minu_contr * 60);
+      obj.fech_progr = codi_servi + minu_contr;
+      obj.fecha = new Date(obj.fech_progr * 1000).toISOString().slice(0,10);
+      obj.hora = new Date(obj.fech_progr * 1000).toLocaleTimeString().slice(0,5);
+      obj.codi_servi = codi_servi;
+      obj.nume_movil = objMovil.nume_movil;
+      lstProgramadas.push(obj);
 
-    if(obj.codi_senti == 1 && regr_servi == 0){
-      expedicionPlus = true;
-      regr_servi = codi_servi + minu_contr;
-    }
-    ulti_contr = codi_servi + minu_contr;
+      if(sentido == 1 && regr_servi == 0){
+        expedicionPlus = true;
+        regr_servi = codi_servi + minu_contr;
+      }
+      ulti_contr = codi_servi + minu_contr;
+    });
   });
+
+
 
   return {
     'movil' : objMovil,

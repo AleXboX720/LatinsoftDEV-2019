@@ -1,4 +1,4 @@
-var lstServicios = null;
+var lstCircuitos = null;
 
 function limpiarListadoServicios(){
   $('#listadoServicios').html('');
@@ -144,7 +144,7 @@ function listarServicios(){
 		}
 	})
 	.done(function(data, textStatus, jqXHR ){		
-		lstServicios = data.listado;
+		lstCircuitos = data.listado;
 
 		//var title = 'Felicidades';
 		//toastr.info(data.msg, title);
@@ -182,7 +182,7 @@ function filtrarListado(nume_movil){
 		}
 	})
 	.done(function(data, textStatus, jqXHR ){
-		lstServicios = data.listado;
+		lstCircuitos = data.listado;
 
 		var title = 'Felicidades';
 		toastr.info(data.msg, title);

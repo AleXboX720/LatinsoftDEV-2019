@@ -1,8 +1,7 @@
-function crearServicio(obj){
-	var frm = $('#frmAgregar');
-	var url = frm.attr('action');
+function crearServicio(servicio, conductor, movil, programadas){
+	var url = 'servicio/registrar';
 
-	var parametros = {'data' : obj};
+	var parametros = {'servicio' : servicio, 'conductor' : conductor, 'movil' : movil, 'programadas' : programadas};
 	var token = document.getElementsByName("_token");
 	$.ajax({
 		url : url,
@@ -13,7 +12,6 @@ function crearServicio(obj){
 	})
 	.done(function(data, textStatus, jqXHR ){
 		listarServicios();
-		//serviciosIniciados(lstServicios);
 	})
 	.always(function( a, textStatus, b ) {
 		//TODO

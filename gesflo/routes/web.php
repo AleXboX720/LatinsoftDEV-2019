@@ -15,10 +15,12 @@ Route::get('/', 'BienvenidaController@index')->name('bienvenida');
 Route::get('/bienvenida', 'BienvenidaController@index');
 
 Route::group(['prefix' => 'gestion'], function(){
-	Route::resource('servicios', 		'Gestion\ServiciosController', ['only' => ['index', 'store']]);
+	Route::resource('servicios', 		'Gestion\ServiciosController', ['only' => ['index']]);
+
+	Route::post('servicio/registrar', 	'Gestion\ServiciosController@store')->name('registrar.servicio');
 
 	Route::put('actualizar/servicios', 	'Gestion\ServiciosController@actualizarServicio')->name('actualizar.servicio');
-	Route::post('servicios/procesar', 'Gestion\ServiciosController@procesarListadoServicios')->name('servicios.procesar');
+	Route::post('servicios/procesar', 	'Gestion\ServiciosController@procesarListadoServicios')->name('servicios.procesar');
 
 	Route::post('servicio/buscar', 		'Gestion\ServiciosController@buscarServicio')->name('buscar.servicio');
 	Route::post('servicios/filtrar', 	'Gestion\ServiciosController@filtrarServicios')->name('filtrar.servicio');
@@ -30,7 +32,7 @@ Route::group(['prefix' => 'gestion'], function(){
 	Route::post('listar/expediciones', 	'Gestion\ExpedicionesController@listarExpediciones2')->name('expediciones.servicio');
 	
 	Route::post('servicios/pendientes', 'Gestion\ServiciosController@serviciosPendientes')->name('servicios.pendiente');
-	Route::post('servicio/existe', 'Gestion\ServiciosController@existeServicio')->name('existe.servicio');
+	Route::post('servicio/existe', 		'Gestion\ServiciosController@existeServicio')->name('existe.servicio');
 
 	Route::put('actualizar/programadas', 'Gestion\ProgramadasController@update')->name('actualizar.programadas');
 
@@ -44,17 +46,16 @@ Route::group(['prefix' => 'gestion'], function(){
 
 	
 	
-	
-	Route::get('listar/controles', 'ControlesController@listarPuntosControl')->name('listar.controles');
-	Route::post('listar/arribos', 'Track\ArribosController@listarArribos')->name('listar.arribos');
+	Route::post('detallar/circuito', 	'Admin\CircuitosController@detallarCircuito')->name('detallar.circuito');
+	Route::post('listar/arribos', 		'Track\ArribosController@listarArribos')->name('listar.arribos');
 
 
 	Route::post('servicios/buscar/movil', 		'Gestion\ServiciosController@buscarMovil');
 	Route::post('servicios/buscar/conductor', 	'Gestion\ServiciosController@buscarConductor');
 });
 
-Route::get('/manager', 'Manager\ManagerController@index')->name('manager');
-Route::get('/administracion', 'Admin\AdministracionController@index')->name('administracion');
+Route::get('/manager', 			'Manager\ManagerController@index')->name('manager');
+Route::get('/administracion', 	'Admin\AdministracionController@index')->name('administracion');
 
 
 
@@ -116,7 +117,10 @@ Route::group(['prefix' => 'mng'], function(){
 });
 
 Route::get('/admin', function () {
-    return view('admin.dashboard');
+	$data['title'] 		= 'ADMINISTRACION';
+	$data['subtitle'] 	= 'ejemplo';
+	
+    return view('admin.dashboard', compact('data'));
 });
 
 

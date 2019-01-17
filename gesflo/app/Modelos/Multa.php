@@ -12,7 +12,7 @@ class Multa extends Model
 	protected $primaryKey = 'codi_servi';
 
 	protected $fillable = [
-		'codi_servi', 'codi_circu', 'codi_senti', 'nume_movil',  
+		'codi_servi', 'codi_circu', 'nume_movil', 'codi_senti',   
 		'tota_multa', 'fech_multa', 'tota_pagad', 'fech_pagad', 
 		'pagada', 'user_modif'
 	];

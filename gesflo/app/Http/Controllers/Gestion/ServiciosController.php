@@ -14,6 +14,7 @@ use App\Modelos\Servicio;
 use App\Modelos\Expedicion;
 use App\Modelos\Programada;
 use App\Modelos\Multa;
+use App\Modelos\Pago;
 
 use App\Modelos\Movil;
 
@@ -36,10 +37,10 @@ class ServiciosController extends Controller
     {
         if($request->ajax())
         {			
-			$servicio       = $request->data['servicio'];
-			$conductor      = $request->data['conductor'];
-			$movil          = $request->data['movil'];
-			$programadas    = $request->data['programadas'];
+			$servicio       = $request->servicio;
+			$conductor      = $request->conductor;
+			$movil          = $request->movil;
+			$programadas    = $request->programadas;
 			
 			
             $expediciones = $this->_definirExpediciones($programadas, $servicio['docu_perso'], $servicio['pate_movil'], $servicio['nume_movil']); 
@@ -225,6 +226,12 @@ class ServiciosController extends Controller
                         delete();
 
                 $objMultas = Multa::
+                            where('codi_servi', $codi_servi)->
+                            where('codi_circu', $codi_circu)->
+                            //where('nume_movil', $nume_movil])->
+                            delete();
+
+                $objPagos = Pago::
                             where('codi_servi', $codi_servi)->
                             where('codi_circu', $codi_circu)->
                             //where('nume_movil', $nume_movil])->

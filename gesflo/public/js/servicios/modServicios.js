@@ -16,7 +16,7 @@ $(document).ready(function(){
     codi_circuito = $('#codi_circu').val();
     $('#copi_numer').val(codi_circuito);
     verificarCambios();
-    listarPuntosControlar();
+    detallarControlesCircuito();
   });
 });
 /*###################################################################################################*/
