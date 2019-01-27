@@ -1,4 +1,4 @@
-<div class="panel panel-yellow">    
+<div class="panel panel-info">    
     <div class="panel-heading">
         <h1 class="panel-title">Listado de Usuarios</h1>
     </div>
@@ -18,8 +18,8 @@
                 </tr>
             </thead>
             <tbody id="tablaListadoPersonas">
-                @foreach($listado as $obj)
-                    <tr @if ($obj->habilitado === 1) class="success" @else class="danger" @endif data-idde_objeto="{{ $obj->docu_perso }}">
+                @foreach($data['listado'] as $obj)
+                    <tr @if ($obj->activo == 1) class="success" @else class="danger" @endif data-idde_objeto="{{ $obj->docu_perso }}">
                         <td class="text-center"><b>{{ $obj->abre_tipo }}</b></td>
                         <td class="text-center">{{ $obj->docu_perso }}</td>
                         <td class="text-center">
@@ -40,10 +40,6 @@
                 @endforeach
             </tbody>
         </table>
-        {!! Form::open(['route' => ['usuarios.destroy', ':IDDE_OBJET'], 'method' => 'DELETE', 'id' => 'frmEliminar']) !!}
-        {!! Form::close() !!}
-    </div>
-    <div class="panel-footer text-center">
-        {!! $listado->render()!!}
+
     </div>
 </div>

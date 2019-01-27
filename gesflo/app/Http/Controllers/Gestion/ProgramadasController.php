@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Gestion;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+
+use App\Modelos\Vistas\ViewProgramadas;
 use App\Modelos\Programada;
 use App\Modelos\Servicio;
 use App\Modelos\Multa;
@@ -33,7 +35,6 @@ class ProgramadasController extends Controller
 
     private function _procesar(Request $request)
     {
-        //dd($request);
         $marcadas   = $request['marcadas'];
         $codi_servi = $request['codi_servi'];
         $codi_circu = $request['codi_circu'];
@@ -48,34 +49,37 @@ class ProgramadasController extends Controller
         foreach($marcadas as $arribo){
             $g = $arribo['geozoneID'];
 
-            $programada = $this->_buscarProgramada($codi_servi, $codi_circu, $codi_senti, $g);
+            $listado = ViewProgramadas::_listar($codi_servi, $codi_circu, $codi_senti, $g);
 
-            if($programada->count() > 0)
-            {
-                $fech_progr = $programada[0]['fech_progr'];
-                $minu_toler = $programada[0]['minu_toler'];
-                $procesado = $programada[0]['procesado'];
-                //if(!$procesado){
-                $f = $arribo['timestamp'];
-                $lat = $arribo['latitude'];
-                $lon = $arribo['longitude'];
-                $h = $arribo['heading'];
-                $v = $arribo['speedKPH'];
+            foreach($listado as $obj){
+                $cabecera   = intval($arribo['heading']);
+                $angulo     = $obj['angulo'];
 
-                $d = floor(($f - strtotime($fech_progr)) / 60);
-                $multa = $this->_calcularMulta($d, $minu_toler);
-                $totalMulta += $multa;
-                
-                $multado = false;
-                if($multa > 0){
-                    $multado = true;
+                $valido = $this->_anguloIncidente($cabecera, $angulo);
+                if($valido)
+                {
+                    $fech_progr = $obj['fech_progr'];
+                    $minu_toler = $obj['minu_toler'];
+                    //$procesado  = $obj['procesado'];
+                    $f = $arribo['timestamp'];
+                    $lat = $arribo['latitude'];
+                    $lon = $arribo['longitude'];
+                    $h = $arribo['heading'];
+                    $v = $arribo['speedKPH'];
+
+                    $d = floor(($f - strtotime($fech_progr)) / 60);
+                    $multa = $this->_calcularMulta($d, $minu_toler);
+                    $totalMulta += $multa;
+                    
+                    $multado = false;
+                    if($multa > 0){
+                        $multado = true;
+                    }
+
+                    $this->_actualizarProgramada($codi_servi, $codi_circu, $codi_senti, $g, $f, $lat, $lon, $h, $v, $d, $multa, $multado);
+                    
+                    usleep(30000);
                 }
-
-                $this->_actualizarProgramada($codi_servi, $codi_circu, $codi_senti, $g, $f, $lat, $lon, $h, $v, $d, $multa, $multado);
-                
-                //usleep(70000);
-                //}
-                unset($programada);
             }
         }
         unset($arribos);
@@ -84,15 +88,7 @@ class ProgramadasController extends Controller
         if($totalMulta > 0)
         {
             $multado = true;
-            Multa::create([
-                'codi_servi' => $codi_servi,
-                'codi_circu' => $codi_circu,
-                'nume_movil' => $nume_movil,
-                'codi_senti' => $codi_senti,
-                'tota_multa' => $totalMulta,
-                'fech_multa' => date('Y-m-d', $codi_servi),
-                'user_modif' => \Auth::user()->docu_perso,
-            ]);
+            Multa::_crear($codi_servi, $codi_circu, $nume_movil, $codi_senti, $totalMulta, date('Y-m-d', $codi_servi));
         }
         Servicio::where('codi_servi', $codi_servi)
             ->where('codi_circu', $codi_circu)
@@ -123,22 +119,6 @@ class ProgramadasController extends Controller
         return $multa;
     }
 
-    private function _buscarProgramada($s, $c, $e, $g)
-    {
-        try
-        {
-            return Programada::
-                where('codi_servi', $s)
-                ->where('codi_circu', $c)
-                ->where('codi_senti', $e)
-                ->where('codi_geoce', $g)
-                ->where('procesado', 0)
-                ->get();
-        } catch (\Exception $e){
-            return response('No se Encontro Programada, para ser Actualizada...!!!', 500);
-        }
-    }
-
     private function _actualizarProgramada($s, $c, $e, $g, $f, $lat, $lon, $h, $v, $d, $t, $m)
     {
         \DB::beginTransaction();
@@ -167,5 +147,29 @@ class ProgramadasController extends Controller
             return response('Algo salio mal...!!!', 500);
         }
         \DB::commit();
+    }
+
+    private function _anguloIncidente($cabecera, $angulo)
+    {
+        $incidencia = false;
+
+        if($angulo == 0){
+            $min = 360 - 30;
+            $max = 0 + 30;
+
+            if(($cabecera >= $min && $cabecera <= 360)|| ($cabecera >= 0 && $cabecera <= $max))
+            {
+                $incidencia = true;
+            }
+        } else {
+            $min = intval($angulo) - 30;
+            $max = intval($angulo) + 30;
+
+            if($cabecera >= $min && $cabecera <= $max)
+            {
+                $incidencia = true;
+            }
+        }
+        return $incidencia;
     }
 }

@@ -146,7 +146,17 @@ class ConductoresController extends Controller
     public function update(Request $request, $docu_perso)
     {
         if($request->ajax()){
-            Persona::find($docu_perso)->update($request->all());
+            //Persona::find($docu_perso)->update($request->all());            
+            Persona::find($docu_perso)->update([
+                'prim_nombr' => strtoupper($request->prim_nombr),
+                'segu_nombr' => strtoupper($request->segu_nombr),
+                'apel_pater' => strtoupper($request->apel_pater),
+                'apel_mater' => strtoupper($request->apel_mater),
+                'idde_gener' => $request->idde_gener,
+                'fech_nacim' => $request->fech_nacim,
+                'idde_nacio' => $request->idde_nacio,
+                'idde_ecivi' => $request->idde_ecivi,
+            ]);
             Domicilio::find($docu_perso)->update($request->all());
             Contacto::find($docu_perso)->update($request->all());
 

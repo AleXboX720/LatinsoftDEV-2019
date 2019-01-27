@@ -1,7 +1,6 @@
-@extends('template/slave')
-@section('titulo', 'Monitor de Frecuencias (Online)')
+@extends('admin.app')
 
-@section('contenido')
+@section('content')
 	<div class="row">
 		
 <div class="col-md-12">
@@ -9,7 +8,7 @@
 		</div>
 </div>	
         <div class="col-md-12">
-	    	<h3 class="page-header">{{ $title }} <small>(Circuito : {{ $codi_circu}})</small></h3>
+	    	<h3 class="page-header">{{ $data['title'] }} <small>(Circuito : {{ $data['codi_circu']}})</small></h3>
 		</div>
 
 		<div class="col-md-12">

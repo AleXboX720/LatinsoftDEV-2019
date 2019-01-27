@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody id="listadoServicios">
-                @foreach($listado as $obj)
+                @foreach($data['listado'] as $obj)
                     @if( $obj->multado === 0)
                         <tr class="success" data-codi_servi="{{ $obj->codi_servi }}">
                     @else
@@ -39,11 +39,6 @@
                 @endforeach
             </tbody>
         </table>
-
-
-        {!! Form::open(['route' => ['servicios.show', ':IDDE_OBJET'], 'method' => 'GET', 'id' => 'frmReImprimir']) !!}
-        {!! Form::close() !!}
-
     </div>
     <div class="panel-footer">
         

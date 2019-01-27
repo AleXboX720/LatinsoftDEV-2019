@@ -19,7 +19,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 //MONITORES DEL SISTEMA
-Route::get('/servicios/{docu_empre}/{codi_circu}', 'MonitoresController@serviciosActuales');
+//http://localhost/laravel/public/api/servicios/96711420/18
+Route::get('/servicios/{docu_empre}/{codi_circu}', 'MonitoresController@index');
 
 //INFORMES DEL SISTEMA
 Route::get('/conductores/servicio/{codi_circu}/{codi_servi}', 'InformesController@miServicio');

@@ -15,4 +15,6 @@ class Programada extends Model
 							'fech_progr', 'fech_contr', 'minu_toler','dife_contro', 'tota_multa', 
 							'latitud', 'longitud', 'grad_angul', 'velo_contr', 'procesado', 'multado'
 						];
+
+	
 }

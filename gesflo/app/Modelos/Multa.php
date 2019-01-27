@@ -22,4 +22,17 @@ class Multa extends Model
         'updated_at',
         'deleted_at'
     ];
+
+    public static function _crear($s, $c, $m, $e, $t, $f)
+	{
+		Multa::create([
+            'codi_servi' => $s,
+            'codi_circu' => $c,
+            'nume_movil' => $m,
+            'codi_senti' => $e,
+            'tota_multa' => $t,
+            'fech_multa' => $f,
+            'user_modif' => \Auth::user()->docu_perso,
+        ]);
+	}
 }

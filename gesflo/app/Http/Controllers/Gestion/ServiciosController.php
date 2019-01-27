@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Gestion;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
-use App\Modelos\Vistas\ViewListarServicios;
+use App\Modelos\Vistas\ViewServicios;
+
 use App\Modelos\Vistas\ViewListarProgramadas;
 use App\Modelos\Vistas\ViewListarMoviles;
 use App\Modelos\Vistas\ViewListarConductores;
@@ -61,7 +62,7 @@ class ServiciosController extends Controller
             } finally {
                 //TODO : IMRPIMIR EL SERVICIO
                 /*
-                $servi = ViewListarServicios::where('codi_servi', $servicio['codi_servi'])
+                $servi = ViewServicios::where('codi_servi', $servicio['codi_servi'])
                     ->where('codi_circu', $servicio['codi_circu'])
                     ->where('nume_movil', $servicio['nume_movil'])
                     ->where('codi_equip', $servicio['codi_equip'])
@@ -329,12 +330,7 @@ class ServiciosController extends Controller
                 $desde = date('Y-m-d H:i:s', $desde);
                 $hasta = date('Y-m-d H:i:s', $hasta);
 
-                $lst =  ViewListarServicios::where('codi_circu', $codi_circu)
-                            ->where('docu_empre', $this->_docu_empre)
-                            ->where('procesar', true)
-                            ->whereBetween('inic_servi', [$desde, $hasta])
-                            ->orderBy('inic_servi', 'ASC')
-                            ->get();
+                $lst = ViewServicios::_listar($codi_circu, $this->_docu_empre, $desde, $hasta);
 
                 if($lst->count() > 0){
                     $mensaje = 'Hay: ' .$lst->count(). ' Servicios por Procesar.';
@@ -361,7 +357,7 @@ class ServiciosController extends Controller
             $codi_circu = $request->codi_circu;
 
             try{
-                $objServicio = ViewListarServicios::
+                $objServicio = ViewServicios::
                             where('codi_servi', $codi_servi)->
     						where('codi_circu', $codi_circu)->
     						get();
@@ -374,6 +370,7 @@ class ServiciosController extends Controller
                 $objProgramadas =  ViewListarProgramadas::
                             where('codi_servi', $codi_servi)->
                             where('codi_circu', $codi_circu)->
+                            groupBy('fech_progr')->
                             get();
 
                 $objMultas = Multa::
@@ -405,26 +402,7 @@ class ServiciosController extends Controller
             }
         }
     }
-/*
-    public function _tieneServiciosanteriores($codi_circu, $nume_movil, $pate_movil)
-    {
-        try{
-            $servicio = ViewListarServicios::
-                        where('codi_circu', $codi_circu)
-                        ->where('nume_movil', $nume_movil)
-                        ->where('pate_movil', $pate_movil)
-                        ->where('finalizado', 0)
-                        ->get();
-            if($servicio->count() > 0){
-                return true;                
-            } else {
-                return false;
-            }
-        } catch (\Exception $e){
-            return response('Algo salio mal...!!!', 500);
-        }
-    }
-*/
+
     public function serviciosPendientes(Request $request)
     {
         try{
@@ -517,7 +495,7 @@ class ServiciosController extends Controller
     {
         $desde = date('Y-m-d H:i:s', $desde);
         $hasta = date('Y-m-d H:i:s', $hasta);  
-        return ViewListarServicios::where('codi_circu', $codi_circu)
+        return ViewServicios::where('codi_circu', $codi_circu)
             ->where('docu_empre', $this->_docu_empre)
             ->whereBetween('inic_servi', [$desde, $hasta])
             ->orderBy('inic_servi', $orden)
@@ -602,7 +580,7 @@ class ServiciosController extends Controller
             try
             {
                 $nume_movil = $request->nume_movil;
-                $lst = ViewListarServicios::where('nume_movil', $nume_movil)
+                $lst = ViewServicios::where('nume_movil', $nume_movil)
                         ->where('codi_circu', $request->codi_circu)
                         ->where('docu_empre', $this->_docu_empre)
                         ->whereBetween('codi_servi', 

@@ -240,11 +240,11 @@ function _lstHtmlServicios(listado){
 			elHtml += '<td class="info text-center">' +obj.pate_movil+ '</td>';
 			elHtml += '<td class="info text-center"><b>' +obj.nume_movil+ '</b></td>';
 			elHtml += '<td class="text-center"><b>' + hhmm_inici + '</b></td>';
-			elHtml += '<td class="text-center hidden-sm hidden-xs">' + hhmm_termi + '</td>';
-			elHtml += '<td class="text-nowrap">' +obj.conductor+ '</td>';
-			elHtml += '<td class="text-center">' +obj.porcentaje+ ' %</td>';
+			elHtml += '<td class="text-center">' + hhmm_termi + '</td>';
+			elHtml += '<td class="text-nowrap hidden-sm hidden-xs">' +obj.conductor+ '</td>';
+			//elHtml += '<td class="text-center">' +obj.porcentaje+ ' %</td>';
 
-			elHtml += '<td class="text-center hidden-sm hidden-xs">';
+			elHtml += '<td class="text-center">';
 				if (obj.multado)
 				{
 					elHtml += '<a href="#!" class="btn btn-xs btn-warning btnMulta"><i class="fa fa-money fa-fw"></i></a>';

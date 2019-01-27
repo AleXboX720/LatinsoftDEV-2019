@@ -63,7 +63,7 @@ Route::get('/administracion', 	'Admin\AdministracionController@index')->name('ad
 
 //RUTAS: ADMINISTRACION
 Route::group(['prefix' => 'adm'], function(){
-	Route::resource('usuarios', 'UsuariosController', 	['parameters' => ['docu_perso' => 'docu_perso']]);
+	Route::resource('usuarios', 'Admin\UsuariosController');
 	Route::resource('empresas', 'Admin\EmpresasController');
 	//=======================================================================//
 	

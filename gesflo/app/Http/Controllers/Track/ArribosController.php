@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Track;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 
-use App\Modelos\Vistas\ViewListarArribos;
+use App\Modelos\Vistas\ViewArribos;
 
 class ArribosController extends Controller
 {
@@ -15,18 +15,10 @@ class ArribosController extends Controller
             $expedicion = $request->expedicion;
             try
             {
-                $lst = [];
                 $desde = strtotime ( '-10 minutes' , strtotime($expedicion['inic_exped']));
                 $hasta = strtotime ( '+20 minutes' , strtotime($expedicion['term_exped']));
 
-                $arribos = ViewListarArribos::where('deviceID', $expedicion['codi_equip'])
-                ->whereBetween('timestamp', [$desde, $hasta])
-                ->orderBy('timestamp', 'asc')
-                ->groupBy('geozoneID')
-                ->get();
-
-
-                //usleep(2000000);
+                $arribos = ViewArribos::_listar($expedicion['codi_equip'], $desde, $hasta);
                 if($arribos->count() > 0)
                 {
                     if($expedicion['codi_senti'] == 0)

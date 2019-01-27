@@ -1,23 +1,13 @@
-@extends('template/master')
-@section('titulo', $title)
+@extends('admin.layout')
 
-@section('contenido')
-	<div class="row">
-        <div class="col-lg-12">
-            <h3 class="page-header">
-            	{{ $title }}
-            	<a href="{{ route('administracion') }}" class="btn btn-warning pull-right">
-	        		<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Volver
-	        	</a>
-            </h3>
-        </div>
-    </div>
 
-    <div class="alert" id="alert"></div>
-    
+@section('content')
+    <!--
+    	<div class="alert" id="alert"></div>
+	-->
 	<div class="row">
 		<div class="col-md-12">
-			@include('usuarios.listado')
+			@include('administrador.usuarios.listado')
 		</div>
 	</div>
 @endsection

@@ -69,8 +69,8 @@ function configurarRutaXXX(listado, clr){
 }
 
 function definirUrl(d, i, f){
-  //return 'http://localhost/api/trackers/tpublico/antofagasta/linea104/trayectoTracker?idde_devic=' +d+ '&inicio=' +i+ '&fin=' +f;
-  return 'http://www.latinsoft.cl/api/trackers/tpublico/antofagasta/linea104/trayectoTracker?idde_devic=' +d+ '&inicio=' +i+ '&fin=' +f;
+  return 'http://localhost/api/trackers/tpublico/antofagasta/linea104/trayectoTracker?idde_devic=' +d+ '&inicio=' +i+ '&fin=' +f;
+  //return 'http://www.latinsoft.cl/api/trackers/tpublico/antofagasta/linea104/trayectoTracker?idde_devic=' +d+ '&inicio=' +i+ '&fin=' +f;
 }
 
 function listarEventos(url, clr, codi_equip){

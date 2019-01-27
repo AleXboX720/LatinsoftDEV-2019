@@ -87,6 +87,7 @@ class InformesController extends Controller
         $losMoviles = [];
         foreach ($misMoviles as $obj)
         {
+            //dd($obj);
             $nume_movil = $obj->nume_movil;
             $pate_movil = $obj->pate_movil;
             $codi_equip = $obj->codi_equip;

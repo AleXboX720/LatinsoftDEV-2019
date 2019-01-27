@@ -10,10 +10,10 @@
                     <th class="text-center">Patente</th>
                     <th class="text-center">Movil</th>
                     <th class="text-center">Inicio</th>
-                    <th class="text-center hidden-sm hidden-xs">Termino</th>
-                    <th class="text-left">Conductor</th>
-                    <th class="text-center">%</th>
-                    <th class="text-center hidden-sm hidden-xs">Opciones</th>
+                    <th class="text-center">Termino</th>
+                    <th class="text-left hidden-sm hidden-xs">Conductor</th>
+                    <!--<th class="text-center">%</th>-->
+                    <th class="text-center">Opciones</th>
                 </tr>
             </thead>
             <tbody id="listadoServicios">

@@ -10,16 +10,11 @@ class ViewListarProgramadas extends Model
 	
     protected $table = 'viewListarProgramadas';
 	protected $primaryKey = 'codi_servi';
-	
+
 	protected $fillable = [
 							'idde_progr', 'codi_servi', 'nume_movil', 'codi_circu', 'codi_ruta', 'codi_senti', 
 							'codi_geoce', 'nomb_geoce', 'abre_geoce', 'fech_progr', 'fech_contr', 'grad_angul', 
 							'velo_contr', 'multado', 
-							'minu_toler', 'dife_contro', 'procesado'
+							'minu_toler', 'dife_contro', 'procesado', 'angulo'
 						];
-
-	public function scopeSearch($query, $codi_geoce){
-		return $query
-				->where('codi_geoce', '=' , $codi_geoce);
-	}
 }

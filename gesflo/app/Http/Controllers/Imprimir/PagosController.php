@@ -10,7 +10,7 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\Printer;
 
 
-class ServiciosController extends ConfiguracionController
+class PagosController extends ConfiguracionController
 {
 	private $_linkAVL = "http://avl.kguard.org:81/informes/api/conductores/servicio/";
 	private $testStr = 'Nombre\Apellidos\DNI';
