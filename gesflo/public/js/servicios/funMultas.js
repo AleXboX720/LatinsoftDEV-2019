@@ -11,7 +11,6 @@ $(document).ready(function(){
     $('#pagar_ida').select();
   });
 
-
   $('#modal_multa').on('hidden.bs.modal', function(){
     objMulta = null;
     $('#total_ida').val(0);
@@ -53,26 +52,49 @@ $(document).ready(function(){
 });
 /*###################################################################################################*/
 $(document).ready(function(){
-  $('#btnPagar').click(function(e){
-    e.preventDefault();
-    var servicio = objMulta.servicio[0];
-    var expediciones = objMulta.expediciones;
-    var multas = objMulta.multas;
+	$('#btnPagar').click(function(e){
+		e.preventDefault();
+		$('#modal_multa').modal('hide');
+		calcularTotales();
+		var servicio = objMulta.mi_servicio.servicio;
+		var expediciones = objMulta.mi_servicio.expediciones;
+		var multas = objMulta.mi_servicio.multas;
 
-    //multas[0].pagada = true;
-    //multas[1].pagada = true;
-    var nota = $('#nota_multa').val();
-    var pago = pagarMulta(servicio, expediciones, multas, nota);
-    pago.done(function(data, textStatus, jqXHR){ 
-      $('#modal_multa').modal('hide');
-      listarServicios();
-    });
-  });
+		//multas[0].pagada = true;
+		//multas[1].pagada = true;
+		var nota = $('#nota_multa').val();
+		var pago = pagarMulta(servicio, expediciones, multas, nota);
+		pago.done(function(data, textStatus, jqXHR){
+			listarServicios();
+		});
+	});
 });
+
+function imprimirMulta(mi_servicio, mis_controladas, tu_servicio, tus_controladas){
+  var url = 'informe/imprimir';
+  
+  var parametros = 
+  {
+	  'mi_servicio' : mi_servicio, 'mis_controladas' : mis_controladas, 
+	  'tu_servicio' : tu_servicio, 'tus_controladas' : tus_controladas
+  };
+  
+  var token = document.getElementsByName("_token");
+  $.ajax({
+    url: url,
+    headers : {'X-CSRF-TOKEN' : token[0].value},
+    type: 'POST',
+    data: parametros,
+    beforeSend: function(){},
+    error: function(){
+      mostrarMensaje('ALGO SALIO MAL AL IMPRIMIR', 'alert-danger');
+    }
+  }); 
+}
 
 function _cargarCampos(){
   if(objMulta != null){
-    var servicio = objMulta.servicio[0];
+    var servicio = objMulta.mi_servicio.servicio;
     var fech_servi = new Date(servicio.codi_servi * 1000);
     var hora_servi = fech_servi.toTimeString().slice(0,5);          //LINUX
     //var hora_servi = fech_servi.toLocaleTimeString().slice(0,5);    //WINDOWS
@@ -86,7 +108,8 @@ function _cargarCampos(){
     $('#docu_condu').val(servicio.docu_perso);
 
     var total = 0;
-    $.each(objMulta.multas, function(i, obj){
+	var multas = objMulta.mi_servicio.multas;
+    $.each(multas, function(i, obj){
       total += obj.tota_multa;
       if(obj.codi_senti == 0){
         $('#total_ida').val(obj.tota_multa);
@@ -102,8 +125,7 @@ function _cargarCampos(){
 }
 
 function calcularTotales(){
-  var multas = objMulta.multas;
-
+  var multas = objMulta.mi_servicio.multas;
   total_infor = 0;
   total_pagar = 0;
   total_descu = 0;
@@ -112,13 +134,14 @@ function calcularTotales(){
 
     if(multa.codi_senti == 0){
       total_pagar += parseInt($('#pagar_ida').val());
-      objMulta.multas[i].tota_pagad = parseInt($('#pagar_ida').val());
+      objMulta.mi_servicio.multas[i].tota_pagad = parseInt($('#pagar_ida').val());
     }
     if(multa.codi_senti == 1){
       total_pagar += parseInt($('#pagar_regre').val());
-      objMulta.multas[i].tota_pagad = parseInt($('#pagar_regre').val());
+      objMulta.mi_servicio.multas[i].tota_pagad = parseInt($('#pagar_regre').val());
     }
   });
+  
   //multas[0].tota_pagad = parseInt($('#pagar_ida').val());
   //multas[1].tota_pagad = parseInt($('#pagar_regre').val());
   total_descu = parseInt(total_infor) - parseInt(total_pagar);

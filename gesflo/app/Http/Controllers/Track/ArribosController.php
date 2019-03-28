@@ -11,6 +11,7 @@ class ArribosController extends Controller
 {
     public function listarArribos(Request $request)
     {
+        //dd($request->toArray());
         if($request->ajax()){
             $expedicion = $request->expedicion;
             try

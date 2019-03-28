@@ -49,12 +49,16 @@ $(document).ready(function(){
 		busqueda.done(function(data, textStatus, jqXHR){    	
 			$("#modal_informe").modal();
 			objInformeServicio = data;
-			var fech_servi = new Date(data.servicio[0].codi_servi * 1000);
+			var mi_servicio = data.mi_servicio;
+			var servicio = mi_servicio['servicio'];
+			var controladas = mi_servicio['controladas'];
+			
+			var fech_servi = new Date(servicio.inic_servi);
 			var hora_servi = fech_servi.toTimeString().slice(0,5);          //LINUX
 			//var hora_servi = fech_servi.toLocaleTimeString().slice(0,5);    //WINDOWS
 
-			$('#tituloModalInforme').html('Informe del Servicio (MAQ: ' +data.servicio[0].nume_movil+ ' - SERVICIO: ' +hora_servi+')');
-			var listaHTML = _lstHtmlInforme(data.controladas);
+			$('#tituloModalInforme').html('Informe del Servicio (MAQ: ' +servicio.nume_movil+ ' - SERVICIO: ' +hora_servi+')');
+			var listaHTML = _lstHtmlInforme(controladas);
 			$('#listadoControles').html(listaHTML); 
 		});
 	});
@@ -76,12 +80,14 @@ $(document).ready(function(){
 	    busqueda.done(function(data, textStatus, jqXHR){
 	    	$('#modal_mapa').modal();
 			objInformeServicio = data;
-
-			var fech_servi = new Date(data.servicio[0].codi_servi * 1000);
+			var mi_servicio = data.mi_servicio;
+			var servicio = mi_servicio['servicio'];
+			
+			var fech_servi = new Date(servicio.inic_servi);
 			var hora_servi = fech_servi.toTimeString().slice(0,5);          //LINUX
 			//var hora_servi = fech_servi.toLocaleTimeString().slice(0,5);    //WINDOWS
 
-			$('#tituloModalGeozona').html('Trazado del Recorrido (MAQ: ' +data.servicio[0].nume_movil+ ' - SERVICIO: ' +hora_servi+')');
+			$('#tituloModalGeozona').html('Trazado del Recorrido (MAQ: ' +servicio.nume_movil+ ' - SERVICIO: ' +hora_servi+')');
 	    });
 	});
 });
@@ -98,7 +104,11 @@ $(document).ready(function(){
 
 	    var busqueda = buscandoServicio(codi_circu, nume_movil, pate_movil, codi_servi);
 	    busqueda.done(function(data, textStatus, jqXHR){
-	      imprimirServicio(data.servicio, data.controladas); 
+		  var mi_servicio = data.mi_servicio;
+		  var servicio = mi_servicio.servicio;
+		  var controladas = mi_servicio.controladas;
+
+	      imprimirServicio(servicio, controladas); 
 	    });
 	});
 });
@@ -154,6 +164,7 @@ function listarServicios(){
 	})
 	.always(function( a, textStatus, b ) {
 		//TODO
+		$('#btnProcesar').hide();
 	})
 	.fail(function( jqXHR, textStatus, errorThrown){
 		if (jqXHR.status == 404) {
@@ -187,6 +198,7 @@ function filtrarListado(nume_movil){
 		var title = 'Felicidades';
 		toastr.info(data.msg, title);
 
+		/*
 		var hayServicios = false;
 		$.each(data.listado, function(i, servicio){
 			if(servicio.procesar === 1){
@@ -198,11 +210,12 @@ function filtrarListado(nume_movil){
 		} else {
 			$('#btnProcesar').hide();
 		}
+		*/
 		var listaHTML = _lstHtmlServicios(data.listado);
 		$('#listadoServicios').html(listaHTML);
 	})
 	.always(function( a, textStatus, b ) {
-		//TODO
+			$('#btnProcesar').show();
 	})
 	.fail(function( jqXHR, textStatus, errorThrown){
 		if (jqXHR.status == 404) {

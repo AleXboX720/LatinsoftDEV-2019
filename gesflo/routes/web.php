@@ -29,6 +29,7 @@ Route::group(['prefix' => 'gestion'], function(){
 
 	Route::post('servicios/finalizar', 	'Gestion\ServiciosController@finalizarServicios')->name('servicios.finalizar');
 	Route::post('servicios/procesar', 	'Gestion\ServiciosController@procesarServicios')->name('servicios.procesar');
+	Route::post('procesar/servicio', 	'Gestion\ServiciosController@procesarServicio')->name('procesar.servicio');
 	Route::post('listar/expediciones', 	'Gestion\ExpedicionesController@listarExpediciones2')->name('expediciones.servicio');
 	
 	Route::post('servicios/pendientes', 'Gestion\ServiciosController@serviciosPendientes')->name('servicios.pendiente');
@@ -43,6 +44,7 @@ Route::group(['prefix' => 'gestion'], function(){
 	//Route::resource('trackers', 'TrackersController', ['parameters' => ['nume_devic' => 'nume_devic']]);
 	Route::post('servicio/imprimir', 'Imprimir\ServiciosController@imprimir')->name('imprimir.servicio');
 	Route::post('informe/imprimir', 'Imprimir\InformesController@imprimir')->name('imprimir.informe');
+	Route::post('pago/imprimir', 'Imprimir\PagosController@imprimir')->name('imprimir.pago');
 
 	
 	
@@ -52,6 +54,11 @@ Route::group(['prefix' => 'gestion'], function(){
 
 	Route::post('servicios/buscar/movil', 		'Gestion\ServiciosController@buscarMovil');
 	Route::post('servicios/buscar/conductor', 	'Gestion\ServiciosController@buscarConductor');
+});
+
+Route::get('/recaudaciones', 	'Recaudaciones\RecaudacionesController@index')->name('recaudaciones.estadisticas');
+Route::group(['prefix' => 'recau'], function(){
+	Route::get('listar/multas', 	'Recaudaciones\RecaudacionesController@listarMultas')->name('listar.multas');
 });
 
 Route::get('/manager', 			'Manager\ManagerController@index')->name('manager');

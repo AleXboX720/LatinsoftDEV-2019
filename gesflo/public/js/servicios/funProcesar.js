@@ -7,7 +7,8 @@ $(document).ready(function(){
 		var finalizados = finalizarServicios();
 		finalizados.done(function(data, textStatus, jqXHR){
 			if(data.total > 0){
-				var procesar = procesarServicios();
+				var nume_movil = $('#movi_busca').val();
+				var procesar = procesarServicio(nume_movil);
 				procesar.done(function(data, textStatus, jqXHR){
 					$.each(data.listado, function(i, servicio){
 						var expediciones = listarExpediciones2(servicio);
@@ -39,7 +40,6 @@ function finalizarServicios(){
 	var token = document.getElementsByName('_token');
 
 	var parametros = {'fech_servi' : fech_servicio, 'codi_circu' : codi_circuito};
-
 	return $.ajax({
 		url: url,
 		headers : {'X-CSRF-TOKEN' : token[0].value},
@@ -64,11 +64,44 @@ function finalizarServicios(){
 	});
 }
 
+function procesarServicio(nume_movil){
+	var url = 'procesar/servicio';
+	var token = document.getElementsByName('_token');
+
+	var parametros = {'fech_servi' : fech_servicio, 'codi_circu' : codi_circuito, 'nume_movil' : nume_movil};
+	return $.ajax({
+		url: url,
+		headers : {'X-CSRF-TOKEN' : token[0].value},
+		type: 'POST',
+		data: parametros,
+		dataType: 'json',
+		beforeSend: function(){
+			$('#listadoProcesar').html('');
+			$('#total_finalizados').html('');
+		}
+	})
+	.done(function(data, textStatus, jqXHR){
+		console.log(data.msg);
+		var listaHTML = _lstHtmlServiciosProcesar(data.listado);
+		$('#listadoProcesar').html(listaHTML);
+		$('#total_finalizados').html(data.total);
+	})
+	.always(function(a, textStatus, b) {
+		//TODO
+	})
+	.fail(function(jqXHR, textStatus, errorThrown){
+		if (jqXHR.status == 404) {
+			console.log(jqXHR.responseText, title);
+		}
+	});
+}
+
 function procesarServicios(){
 	var url = 'servicios/procesar';
 	var token = document.getElementsByName('_token');
 
-	var parametros = {'fech_servi' : fech_servicio, 'codi_circu' : codi_circuito};
+	var nume_movil = $('#movi_busca').val();
+	var parametros = {'fech_servi' : fech_servicio, 'codi_circu' : codi_circuito, 'nume_movil' : nume_movil};
 
 	return $.ajax({
 		url: url,
@@ -158,12 +191,14 @@ function actualizarProgramadas(data){
 	var url = 'actualizar/programadas';
   	var token = document.getElementsByName('_token');  
 
-	var parametros = {'marcadas' : data.listado, 
-	'codi_servi' : data.codi_servi, 
-	'codi_circu' : data.codi_circu, 
-	'codi_senti' : data.codi_senti, 
-	'nume_movil' : data.nume_movil, 
-	'pate_movil' : data.pate_movil};
+	var parametros = {
+		'marcadas' 		: data.listado, 
+		'codi_servi' 	: data.codi_servi, 
+		'codi_circu' 	: data.codi_circu, 
+		'codi_senti' 	: data.codi_senti, 
+		'nume_movil' 	: data.nume_movil, 
+		'pate_movil' 	: data.pate_movil
+	};
 	return $.ajax({
 		url: url,
 		headers : {'X-CSRF-TOKEN' : token[0].value},

@@ -2,47 +2,39 @@ var objServicio = null;
 
 function guardarServicio(){
 	objServicio = _definirServicio();
-  var obj = objServicio.servicio;
+	var obj = objServicio.servicio;
 
-  var existe = existeServicio(obj.codi_circu, obj.codi_servi);
+	var existe = existeServicio(obj.codi_circu, obj.codi_servi);
 
-  existe.done(function(data, textStatus, jqXHR){
-    if(data.existe){
-      var title = 'Atencion';
-      toastr.error(data.msg, title);
-      $('#hora_servi').focus();
-      
-      return;
-    } else {
-      var pendientes = serviciosPendientes(obj.codi_circu, obj.nume_movil, obj.pate_movil);
-      pendientes.done(function(data, textStatus, jqXHR){
-        //console.dir(data);
-        if(data.pendientes){
-          var title = 'Nota';
-          toastr.warning(data.msg, title);
-          $('#nume_movil').focus();
-          
-          return;
-        } else {
-          var servicio = objServicio.servicio;
-          var conductor = objServicio.conductor;
-          var movil = objServicio.movil;
-          var programadas = objServicio.programadas;
+	existe.done(function(data, textStatus, jqXHR){
+	if(data.existe){
+		var title = 'Atencion';
+		toastr.error(data.msg, title);
+		$('#hora_servi').focus();
 
-          crearServicio(servicio, conductor, movil, programadas);
-          if($('#impr_servi').prop('checked')){
-            setTimeout(function(){
-              var busqueda = buscandoServicio(obj.codi_circu, obj.nume_movil, obj.pate_movil, obj.codi_servi);
-              busqueda.done(function(data, textStatus, jqXHR){
-                imprimirServicio(data.servicio, data.controladas); 
-              });   
-            }, 3000);
-          }
-          limpiarCampos();
-        }
-      });      
-    }
-  }); 
+		return;
+	} else {
+		var pendientes = serviciosPendientes(obj.codi_circu, obj.nume_movil, obj.pate_movil);
+		pendientes.done(function(data, textStatus, jqXHR){
+		if(data.pendientes){
+			var title = 'Nota';
+			toastr.warning(data.msg, title);
+			$('#nume_movil').focus();
+
+			return;
+		} else {
+			var servicio = objServicio.servicio;
+			var conductor = objServicio.conductor;
+			var movil = objServicio.movil;
+			var programadas = objServicio.programadas;
+
+			var imprimir = $('#impr_servi').prop('checked');
+			crearServicio(servicio, conductor, movil, programadas, imprimir);
+			limpiarCampos();
+		}
+		});    
+	}
+	}); 
 }
 
 function _definirServicio(){
@@ -58,6 +50,8 @@ function _definirServicio(){
   var codi_circu = parseInt($('#codi_circu').val());
   var codi_licen = parseInt($('#codi_licen').val());
   var docu_perso = parseInt($('#docu_perso').val());
+  //var conductor = $('#prim_nombr').val() +' '+ $('#apel_pater').val() +' '+ $('#apel_mater').val();
+  //alert(conductor);
   var pate_movil = $('#pate_movil').val();
   var codi_equip = parseInt($('#codi_equip').val());
   var fech_servi = $('#fech_servi').val();
@@ -76,7 +70,7 @@ function _definirServicio(){
       minu_contr += Math.round(obj.minu_contr * 60);
       obj.fech_progr = codi_servi + minu_contr;
       obj.fecha = new Date(obj.fech_progr * 1000).toISOString().slice(0,10);
-      obj.hora = new Date(obj.fech_progr * 1000).toLocaleTimeString().slice(0,5);
+      obj.hora = new Date(obj.fech_progr * 1000).toISOString().slice(11,16);
       obj.codi_servi = codi_servi;
       obj.nume_movil = objMovil.nume_movil;
       lstProgramadas.push(obj);

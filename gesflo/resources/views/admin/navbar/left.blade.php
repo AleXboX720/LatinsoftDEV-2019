@@ -42,7 +42,6 @@
 
     <!-- Sidebar Menu -->
     <ul class="sidebar-menu" data-widget="tree">
-      <li class="header">HEADER</li>
       <!-- Optionally, you can add icons to the links -->
       <li class="{{ Request::is('bienvenida') ? 'active' : '' }}">
         <a href="{{ route('bienvenida') }}">
@@ -50,11 +49,20 @@
         </a>
       </li>
 
-      <li class="{{ Request::is('') ? 'active' : '' }}">
-        <a href="#">
-          <i class="fa fa-line-chart fa-fw"></i> <span>Estadisticas</span>
-        </a>
-      </li>
+		<li class="treeview {{ Request::is('recaudaciones') ? 'active' : '' }}">
+			<a href="#">
+				<i class="fa fa-money fa-fw"></i> Recaudacion
+					<span class="pull-right-container"><i class="fa fa-angle-left pull-right">
+				</i>
+			</span>
+			</a>
+			<ul class="treeview-menu">
+				<li><a href="{{ route('recaudaciones.estadisticas') }}"><i class="fa fa-line-chart fa-fw"></i> <span>Estadisticas</span></a></li>
+				<li><a href="{{ route('listar.multas') }}"><i class="fa fa-handshake-o fa-fw"></i> Multas</a></li>
+				<li><a href="#">Cuotas</a></li>
+				<li><a href="#">Otros</a></li>                
+			</ul>
+		</li>
 
       <li class="treeview {{ Request::is('gestion/servicios') ? 'active' : '' }}">
         <a href="#"><i class="fa fa-sitemap fa-fw"></i> <span>Control de Flota</span>
@@ -63,17 +71,8 @@
             </span>
         </a>
         <ul class="treeview-menu">
-          <li><a href="{{ route('servicios.index') }}"><i class="fa fa-files-o fa-fw"></i> Servicios</a></li>
-          <li class="treeview">
-            <a href="#"><i class="fa fa-money fa-fw"></i> Recaudacion<span class="pull-right-container"><i class="fa fa-angle-left pull-right"></i>
-                </span>
-            </a>
-            <ul class="treeview-menu">
-              <li><a href="#">Multas</a></li>
-              <li><a href="#">Cuotas</a></li>
-              <li><a href="#">Otros</a></li>                
-            </ul>
-          </li>
+			<li><a href="{{ route('servicios.index') }}"><i class="fa fa-files-o fa-fw"></i> Servicios</a></li>
+			<li><a href="#"><i class="fa fa-line-chart fa-fw"></i> <span>Estadisticas</span></a></li>
         </ul>
       </li>
 

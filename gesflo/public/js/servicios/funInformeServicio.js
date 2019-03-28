@@ -66,15 +66,31 @@ function _lstHtmlInforme(listado){
 }
 
 $(document).ready(function(){
-  $('.btnImprimirInforme').click(function(){
-    imprimirInforme(objInformeServicio.servicio, objInformeServicio.controladas);
-  });
+	$('.btnImprimirInforme').click(function(){
+		var mi_servicio = objInformeServicio.mi_servicio.servicio;
+		var mis_controladas = objInformeServicio.mi_servicio.controladas;
+
+		if(objInformeServicio.tu_servicio === null)
+		{
+			var tu_servicio = null;
+			var tus_controladas = null;	
+		} else {
+			var tu_servicio = objInformeServicio.tu_servicio.servicio;
+			var tus_controladas = objInformeServicio.tu_servicio.controladas;			
+		}
+		imprimirInforme(mi_servicio, mis_controladas, tu_servicio, tus_controladas);
+		$('#modal_informe').modal('hide');
+	});
 });
 
-function imprimirInforme(servicio, controladas){
+function imprimirInforme(mi_servicio, mis_controladas, tu_servicio, tus_controladas){
   var url = 'informe/imprimir';
   
-  var parametros = {'servicio' : servicio, 'controladas' : controladas};
+  var parametros = 
+  {
+	  'mi_servicio' : mi_servicio, 'mis_controladas' : mis_controladas, 
+	  'tu_servicio' : tu_servicio, 'tus_controladas' : tus_controladas
+  };
   
   var token = document.getElementsByName("_token");
   $.ajax({

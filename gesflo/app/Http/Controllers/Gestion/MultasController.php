@@ -10,6 +10,8 @@ use App\Modelos\Servicio;
 use App\Modelos\Multa;
 use App\Modelos\Pago;
 
+use App\Http\Controllers\Imprimir\PagosController;
+
 class MultasController extends Controller
 {
     private $_tipo_pago = 1;
@@ -28,7 +30,8 @@ class MultasController extends Controller
 
     public function pagarMulta(Request $request)
     {
-        if($request->ajax()){
+        if($request->ajax())
+		{
             $servicio = $request->servicio;
             $expediciones = $request->expediciones;
             $multas = $request->multas;
@@ -56,18 +59,16 @@ class MultasController extends Controller
                     $desc_total += $multa['tota_multa'] - $multa['tota_pagad'];
 
                 }
-
-                Pago::create([
-                    'codi_servi' => $multas[0]['codi_servi'],
-                    'codi_circu' => $multas[0]['codi_circu'],
-                    'nume_movil' => $multas[0]['nume_movil'],
-
-                    'tipo_pago'  => $this->_tipo_pago,
-                    'nota_pago'  => strtoupper($nota_pago),
-                    'pago_total' => $pago_total,
-                    'desc_total' => $desc_total,
-                    'user_modif' => \Auth::user()->docu_perso
-                ]);
+                Pago::_crear(
+                    $servicio['codi_servi'],
+                    $servicio['codi_circu'],
+                    $servicio['nume_movil'],
+                    $this->_tipo_pago,
+                    strtoupper($nota_pago),
+                    $pago_total,
+                    $desc_total,
+                    \Auth::user()->docu_perso
+                );
 
                 Servicio::where('codi_servi', $servicio['codi_servi'])
                     ->where('codi_circu', $servicio['codi_circu'])
@@ -83,10 +84,19 @@ class MultasController extends Controller
                 return response()->json([
                     'msg' => $mensaje
                 ], 200);
-            } catch (\Exception $e){
+				
+				/**/
+            } 
+			catch (\Exception $e)
+			{
                 \DB::rollback();
                 return response('Algo salio mal...!!!', 500);
-            } finally {
+            } 
+			finally 
+			{
+				$boleta_pagar = new PagosController;
+				$boleta_pagar->imprimir($servicio, $multas, $nota_pago);
+				//$boleta_pagar->imprimirVouche($servicio, $multas, $nota_pago);
             }
             \DB::commit();
         }

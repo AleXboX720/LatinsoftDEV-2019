@@ -31,6 +31,12 @@ class ManagerController extends Controller
 
     private function _losModulos()
     {
+        $desde = strtotime(date('Y-m-d', strtotime('first day of this month')));
+        $hasta = strtotime(date('Y-m-d', strtotime('last day of this month')));
+
+        $desde = date('Y-m-d H:i:s', $desde);
+        $hasta = date('Y-m-d H:i:s', $hasta);
+
         return array(
             [
                 'title'  => 'Conductores',
@@ -74,7 +80,9 @@ class ManagerController extends Controller
                     'add' => '#!',
                     'list'=> '#!'
                 ],
-                'total' => ViewListarServicios::where('docu_empre', $this->_docu_empre)->get()->count()
+                'total' => ViewListarServicios::where('docu_empre', $this->_docu_empre)
+                ->whereBetween('inic_servi', [$desde, $hasta])
+                ->get()->count()
             ],
             [
                 'title'  => 'Expediciones',
@@ -85,7 +93,9 @@ class ManagerController extends Controller
                     'add' => '#!',
                     'list'=> '#!'
                 ],
-                'total' => Expedicion::where('docu_empre', $this->_docu_empre)->where('procesada', 0)->get()->count()
+                'total' => Expedicion::where('docu_empre', $this->_docu_empre)
+                ->whereBetween('inic_exped', [$desde, $hasta])
+                ->where('procesada', 0)->get()->count()
             ],
             [
                 'title'  => 'Equipos',

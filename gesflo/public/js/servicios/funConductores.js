@@ -50,7 +50,9 @@ function buscarConductor(codi_licen){
   })
   .fail(function( jqXHR, textStatus, errorThrown){
     if (jqXHR.status == 404) {
-      alert(jqXHR.responseText);
+      var title = 'Atencion';
+      toastr.warning(jqXHR.responseText, title);
+      
       $('#btnGuardar').prop('disabled', true);
       $('#codi_licen').focus();
       $('#codi_licen').select();

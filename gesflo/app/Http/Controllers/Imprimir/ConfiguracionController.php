@@ -92,7 +92,7 @@ class ConfiguracionController extends Controller
         $printer->text($str);
         $printer->selectPrintMode();
     }
-	
+		
 	public function codigoBarras1(Printer $printer, $str)
     {
 		$height = 32; 								//1, 2, 4, 8, 16, 32

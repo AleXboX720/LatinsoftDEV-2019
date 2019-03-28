@@ -20,6 +20,8 @@ use App\Modelos\Pago;
 use App\Modelos\Movil;
 
 
+use App\Http\Controllers\Imprimir\ServiciosController as ImprimirServicio;
+
 class ServiciosController extends Controller
 {
     public function index(Request $request)
@@ -41,17 +43,26 @@ class ServiciosController extends Controller
 			$servicio       = $request->servicio;
 			$conductor      = $request->conductor;
 			$movil          = $request->movil;
-			$programadas    = $request->programadas;
-			
+			$programadas    = $request->programadas;			
 			
             $expediciones = $this->_definirExpediciones($programadas, $servicio['docu_perso'], $servicio['pate_movil'], $servicio['nume_movil']); 
-            \DB::beginTransaction();
+            
+			$imprimir    = $request->imprimir;
 
-            try{
-                $this->_salvarServicio($servicio);
-                $this->_salvarMovil($movil, $servicio['codi_licen'], $servicio['codi_servi']);
-                $this->_salvarProgramadas($programadas);
-                $this->_salvarExpediciones($expediciones);
+			\DB::beginTransaction();
+            try
+            {                
+                Servicio::_crear($servicio);
+                foreach($programadas as $programada){
+                    Programada::_crear($programada);
+                }
+                foreach($expediciones as $expedicion){
+                    Expedicion::_crear($expedicion);
+                }
+                $movil['docu_condu'] = $servicio['codi_licen'];
+                $movil['ulti_servi'] = $servicio['codi_servi'];
+                Movil::_actualizar($movil);
+                
                 $mensaje = 'Nota: Servicio Registrado Correctamente.';
                 return response()->json([
                     'msg' => $mensaje
@@ -60,84 +71,12 @@ class ServiciosController extends Controller
                 \DB::rollback();
                 return response('Algo salio mal...!!!', 500);
             } finally {
-                //TODO : IMRPIMIR EL SERVICIO
-                /*
-                $servi = ViewServicios::where('codi_servi', $servicio['codi_servi'])
-                    ->where('codi_circu', $servicio['codi_circu'])
-                    ->where('nume_movil', $servicio['nume_movil'])
-                    ->where('codi_equip', $servicio['codi_equip'])
-                    ->get();
-                event(new \App\Events\Servicios\Imprimir($servi, $programadas, $conductor, $movil));
-                */
+				if($imprimir === "true"){
+					$boleta_pagar = new ImprimirServicio;
+					$boleta_pagar->imprimirVouche($servicio, $programadas, $conductor, $movil);
+				}
             }
             \DB::commit();
-        }
-    }
-
-    private function _salvarServicio($servicio)
-    {
-        $obj = new Servicio($servicio);
-        Servicio::create([
-            'codi_servi' => $obj->codi_servi,
-            'codi_circu' => $obj->codi_circu,
-            'docu_empre' => $obj->docu_empre,
-            'docu_perso' => $obj->docu_perso,
-            'nume_movil' => $obj->nume_movil,
-            'pate_movil' => $obj->pate_movil,
-            'codi_equip' => $obj->codi_equip,
-            'inic_servi' => date('Y-m-d H:i:s', $obj->inic_servi),
-            'term_servi' => date('Y-m-d H:i:s', $obj->term_servi),
-            'habilitado' => $obj->habilitado,
-			'user_modif' => \Auth::user()->docu_perso
-        ]);
-    }
-
-    private function _salvarMovil($movil, $codi_licen, $codi_servi)
-    {
-        $obj = new Movil($movil);
-        Movil::where('nume_movil', $obj->nume_movil)
-            ->where('pate_movil', $obj->pate_movil)
-            ->where('codi_equip', $obj->codi_equip)
-            ->where('nume_movil', $obj->nume_movil)
-            ->where('docu_empre', $obj->docu_empre)
-        ->update([
-            'docu_condu'    => $codi_licen,
-            'ulti_servi'    => $codi_servi
-        ]);
-    }
-
-    private function _salvarProgramadas($programadas)
-    {
-        foreach($programadas as $programada){
-            $obj = new Programada($programada);
-            Programada::create([
-                'codi_circu' => $obj->codi_circu,
-                'codi_senti' => $obj->codi_senti,
-                'codi_ruta'  => $obj->codi_ruta,
-                'codi_geoce' => $obj->codi_geoce,
-                'minu_toler' => $obj->minu_toler,
-                'fech_progr' => date('Y-m-d H:i:s', $obj->fech_progr),
-                'codi_servi' => $obj->codi_servi,
-                'nume_movil' => $obj->nume_movil
-            ]);
-        }
-    }
-
-    private function _salvarExpediciones($expediciones)
-    {
-        foreach($expediciones as $expedicion){
-            $obj = new Expedicion($expedicion);      
-            Expedicion::create([
-                'codi_servi' => $obj->codi_servi,
-                'codi_circu' => $obj->codi_circu,
-                'codi_senti' => $obj->codi_senti,
-                'docu_empre' => $obj->docu_empre,
-                'docu_perso' => $obj->docu_perso,
-                'nume_movil' => $obj->nume_movil,
-                'pate_movil' => $obj->pate_movil,
-                'inic_exped' => $obj->inic_exped,
-                'term_exped' => $obj->term_exped                
-            ]);
         }
     }
 
@@ -317,6 +256,40 @@ class ServiciosController extends Controller
         }
     }
 
+    public function procesarServicio(Request $request)
+    {
+        if($request->ajax())
+        {
+            $codi_circu = $request->codi_circu;
+            $fech_servi = $request->fech_servi;
+            $nume_movil = $request->nume_movil;
+            try
+            {            
+                $desde = strtotime('+0 day', strtotime($fech_servi));
+                $hasta = strtotime('+1 day', strtotime($fech_servi));
+                $desde = date('Y-m-d H:i:s', $desde);
+                $hasta = date('Y-m-d H:i:s', $hasta);
+
+                //$lst = ViewServicios::_listar($codi_circu, $this->_docu_empre, $desde, $hasta);
+
+                $lst = ViewServicios::_procesarServicio($codi_circu, $nume_movil, $desde, $hasta, 'ASC');
+                if($lst->count() > 0){
+                    $mensaje = 'Hay: ' .$lst->count(). ' Servicios por Procesar.';
+                    return response()->json([
+                            'listado'   => $lst->toArray(),
+                            'procesar'  => true, 
+                            'total'     => $lst->count(),
+                            'msg'           => $mensaje
+                    ], 200);
+                } else {
+                    return response('No se Encontraron Servicios para Procesar.', 404);
+                }
+    
+            } catch (\Exception $e){
+                return response('Algo salio mal...!!!', 500);
+            }
+        }
+    }
     public function procesarServicios(Request $request)
     {
         if($request->ajax())
@@ -330,8 +303,9 @@ class ServiciosController extends Controller
                 $desde = date('Y-m-d H:i:s', $desde);
                 $hasta = date('Y-m-d H:i:s', $hasta);
 
-                $lst = ViewServicios::_listar($codi_circu, $this->_docu_empre, $desde, $hasta);
+                //$lst = ViewServicios::_listar($codi_circu, $this->_docu_empre, $desde, $hasta);
 
+                $lst = ViewServicios::_procesar($codi_circu, $desde, $hasta, 'ASC');
                 if($lst->count() > 0){
                     $mensaje = 'Hay: ' .$lst->count(). ' Servicios por Procesar.';
                     return response()->json([
@@ -357,42 +331,70 @@ class ServiciosController extends Controller
             $codi_circu = $request->codi_circu;
 
             try{
-                $objServicio = ViewServicios::
+                $mi_servicio = ViewServicios::
                             where('codi_servi', $codi_servi)->
     						where('codi_circu', $codi_circu)->
+                            limit(1)->
     						get();
-
-                $objExpediciones = Expedicion::
+                $mis_expediciones = Expedicion::
                             where('codi_servi', $codi_servi)->
                             where('codi_circu', $codi_circu)->
                             get();
-
-                $objProgramadas =  ViewListarProgramadas::
+                $mis_controladas =  ViewListarProgramadas::
                             where('codi_servi', $codi_servi)->
                             where('codi_circu', $codi_circu)->
                             groupBy('fech_progr')->
                             get();
-
-                $objMultas = Multa::
+                $mis_multas = Multa::
                             where('codi_servi', $codi_servi)->
                             where('codi_circu', $codi_circu)->
                             get();
+                /*SERVICIO ANTERIOR*/
+                $serv_anter = $mi_servicio[0]['serv_anter'];
+                $tu_servicio = null;
+                $tus_expediciones = null;
+                $tus_controladas = null;
+                $tus_multas = null;
+                if($serv_anter != null){
+                    $tu_servicio = 
+                    [
+                        'servicio'      => ViewServicios::
+                            where('codi_servi', $serv_anter)->
+                            where('codi_circu', $codi_circu)->
+                            limit(1)->
+                            get()->toArray()[0],
+                        'expediciones'  => Expedicion::
+                            where('codi_servi', $serv_anter)->
+                            where('codi_circu', $codi_circu)->
+                            get(),
+                        'controladas'   => ViewListarProgramadas::
+                            where('codi_servi', $serv_anter)->
+                            where('codi_circu', $codi_circu)->
+                            groupBy('fech_progr')->
+                            get(),
+                        'multas'        => Multa::
+                            where('codi_servi', $serv_anter)->
+                            where('codi_circu', $codi_circu)->
+                            get(),
+                    ];
+                }
 
-                if($objServicio->count() > 0){
+                if($mi_servicio->count() > 0){
                     $multado = false;
-                    if($objMultas->count() > 0){
+                    if($mis_multas->count() > 0){
                         $multado = true;
                     }
                     $mensaje = 'Nota: Servicio "COD: '.$codi_servi. '" Encontrado Correctamente.';
                     return response()->json([
-                        'msg'           => $mensaje, 
-                        'servicio'      => $objServicio, 
-                        'expediciones'  => $objExpediciones, 
-                        'controladas'   => $objProgramadas, 
-                        'multas'        => $objMultas,
-                        'multado'       => $multado,
-                        'total'         => $objServicio->count(),
-                        'clr'           => 'alert-info'
+                        //'msg'           => $mensaje, 
+                        'mi_servicio'  => [
+                            'servicio'   => $mi_servicio[0], 
+                            'expediciones'  => $mis_expediciones, 
+                            'controladas'   => $mis_controladas, 
+                            'multas'        => $mis_multas,
+                        ],
+                        'tu_servicio'   => $tu_servicio, 
+                        //'multado'       => $multado
                     ], 200);
                 } else {
                     return response('No se Encontraron Servicios con el "COD: '.$codi_servi. '"', 404);
@@ -542,7 +544,7 @@ class ServiciosController extends Controller
                     ->where('docu_empre', $this->_docu_empre)
                     ->limit(1)
                     ->get();
-
+                    
                 $mensaje = '<b>Nota: </b>Conductor Encontrado Exitosamente.';
 
                 if($conductor->count() > 0){
@@ -556,7 +558,7 @@ class ServiciosController extends Controller
                         'clr'       => 'alert-info'
                     ], 200);
                 } else {
-                    return response('Nota: No se Encontro el Conductor "COD: '.$nume_movil. '"', 404);
+                    return response('Nota: No se Encontro el Conductor "COD: '.$codi_licen. '"', 404);
                 }
             } catch (\Exception $e){
                 return response('Algo salio mal...!!!', 500);

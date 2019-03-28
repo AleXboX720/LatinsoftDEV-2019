@@ -46,6 +46,7 @@
 
 
 
+	
 
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyCpcjpET_egxZ-KiFlQwio0x7HLFjcphgc"></script>
 	
@@ -56,4 +57,5 @@
 	<script src="{{{ asset('js/gmaps/funModalMapa.js') }}}"></script>
 	<script src="{{{ asset('js/gmaps/mapaLathinSoft.js') }}}"></script>
 	<script src="{{{ asset('js/gmaps/funGeozonas.js') }}}"></script>
+
 @endsection

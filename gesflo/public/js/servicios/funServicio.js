@@ -1,7 +1,7 @@
-function crearServicio(servicio, conductor, movil, programadas){
+function crearServicio(servicio, conductor, movil, programadas, imprimir){
 	var url = 'servicio/registrar';
 
-	var parametros = {'servicio' : servicio, 'conductor' : conductor, 'movil' : movil, 'programadas' : programadas};
+	var parametros = {'servicio' : servicio, 'conductor' : conductor, 'movil' : movil, 'programadas' : programadas, 'imprimir' : imprimir};
 	var token = document.getElementsByName("_token");
 	$.ajax({
 		url : url,

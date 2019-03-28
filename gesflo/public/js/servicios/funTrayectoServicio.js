@@ -26,9 +26,14 @@ $(document).ready(function(){
 
 function _crearRuta(codi_senti, clr){
   limpiarListados();
+  //var expediciones = objInformeServicio.expediciones;
+  //var codi_equip = objInformeServicio.servicio[0].codi_equip;
 
-  var expediciones = objInformeServicio.expediciones;
-  var codi_equip = objInformeServicio.servicio[0].codi_equip;
+  var mi_servicio = objInformeServicio.mi_servicio;
+  var servicio = mi_servicio.servicio;
+  var expediciones = mi_servicio.expediciones;
+  var codi_equip = servicio.codi_equip;
+
   $.each(expediciones, function(i, obj){
     if(obj.codi_senti == codi_senti){
       var desde = new Date(obj.inic_exped).getTime()/1000;
@@ -106,7 +111,6 @@ function listarEventos(url, clr, codi_equip){
         //TODO
   })
   .fail(function( jqXHR, textStatus, errorThrown){
-    console.dir(jqXHR);
     if (jqXHR.status == 404) {
       alert(jqXHR.responseText);
     }
@@ -238,9 +242,10 @@ $(document).ready(function(){
     actualizarBurbuja(elMarker, laBurbuja, spd);
     laBurbuja.open(elMapa, elMarker);
 
+    //console.clear();
     //console.dir(lstEventos[valor]);
-    //$('#tiempo').html(lstEventos[valor].Hora);
-    $('#tiempo').html('GRADOS: '+ lstEventos[valor].Heading);
+    //$('#tiempo').html('GRADOS: '+ lstEventos[valor].Heading);
+    $('#tiempo').html('HORA: '+ lstEventos[valor].Hora);
     
 
   });

@@ -30,4 +30,23 @@ class Servicio extends Model
 	public function scopeProcesar($query){
         return $query->where('procesar', true);
     }
+
+    public static function _crear($servicio)
+	{
+        $obj = new Servicio($servicio);
+        //Servicio::_crear($obj);
+		Servicio::create([
+            'codi_servi' => $obj->codi_servi,
+            'codi_circu' => $obj->codi_circu,
+            'docu_empre' => $obj->docu_empre,
+            'docu_perso' => $obj->docu_perso,
+            'nume_movil' => $obj->nume_movil,
+            'pate_movil' => $obj->pate_movil,
+            'codi_equip' => $obj->codi_equip,
+            'inic_servi' => date('Y-m-d H:i:s', $obj->inic_servi),
+            'term_servi' => date('Y-m-d H:i:s', $obj->term_servi),
+            'habilitado' => $obj->habilitado,
+			'user_modif' => \Auth::user()->docu_perso
+        ]);
+	}
 }

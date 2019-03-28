@@ -24,151 +24,212 @@ class InformesController extends ConfiguracionController
 		$printer = new Printer($connector);
 		
 		try {
-			$servicio = $request['servicio'][0];
-			$controladas = $request['controladas'];
+			$mi_servicio = $request['mi_servicio'];
+			$mis_controladas = $request['mis_controladas'];
+			$tu_servicio = $request['tu_servicio'];
+			$tus_controladas = $request['tus_controladas'];
 
-
-			$inic_servi = new \DateTime($servicio['inic_servi']);
+			$inic_servi = new \DateTime($mi_servicio['inic_servi']);
 			$fech_servi = $inic_servi->format('d-m-Y');
-			$hora_servi = = $inic_servi->format('H:i');
-			//$fech_servi = date("d-m-Y", strtotime($this->_zonaHoraria, $servicio['inic_servi']));
-			//$hora_servi = date("H:i", strtotime($this->_zonaHoraria, $servicio['inic_servi']));
+			$hora_servi = $inic_servi->format('H:i');
+			//$fech_servi = date("d-m-Y", strtotime($this->_zonaHoraria, $mi_servicio['inic_servi']));
+			//$hora_servi = date("H:i", strtotime($this->_zonaHoraria, $mi_servicio['inic_servi']));
 			
-			$codi_servi = $servicio['codi_servi'];
+			$codi_servi = $mi_servicio['codi_servi'];
 						
 			
-			$this->titulo1($printer, "INFORME DEL SERVICIO\n", Printer::JUSTIFY_CENTER);
+			$this->titulo1($printer, $this->_titulo, Printer::JUSTIFY_CENTER);
 			$this->lineaSeparacion2($printer);
 			$printer->setLineSpacing(44);
+			
 			$printer->setJustification(Printer::JUSTIFY_LEFT);
 			$this->negrita2($printer, "Movil      : ");
-			$this->letra2($printer, $servicio['nume_movil']);			
+			$this->letra2($printer, $mi_servicio['nume_movil']);			
 			$this->negrita2($printer, "         Patente : ");
-			$this->letra2($printer, $servicio['pate_movil'] ."\n");
+			$this->letra2($printer, $mi_servicio['pate_movil'] ."\n");
 			
 			$this->negrita2($printer, "Conductor  : ");
-			$this->letra2($printer, $servicio['docu_perso'] ." - ". $servicio['conductor'] ."\n");		
+			$this->letra2($printer, $mi_servicio['docu_perso'] ." - ". $mi_servicio['conductor'] ."\n");
 			$this->negrita2($printer, "Fecha      : ");
 			$this->letra2($printer, $fech_servi);
-			$this->negrita2($printer, "  Hora : ");
+			$this->negrita2($printer, " Hora : ");
 			$this->letra2($printer, $hora_servi ."\n");
 			
-			//$this->lineaSeparacion2($printer);			
-			//$this->negrita2($printer, "Controlador  : ");
-			//$this->letra2($printer, "12345678 - Nombre Apellido\n");
-			$this->lineaSeparacion2($printer);
+			
+			$this->negrita2($printer, "Circuito   : ");
+			$this->letra2($printer, $mi_servicio['codi_circu'] ." - ". $mi_servicio['nomb_circu']. "\n");
 			/**/
-			$this->negrita2($printer, "ZONAS   ");
-			$this->negrita2($printer, "PROGR ");
-			$this->negrita2($printer, "CONTR ");
-			$this->negrita2($printer, "TOL ");
-			$this->negrita2($printer, "MUL  ");
-			$this->negrita2($printer, "VALOR $\n");
+			$this->lineaSeparacion2($printer);
+			//$printer->setReverseColors(true);
+			$tabs = chr(6). chr(11). chr(16). chr(20). chr(25). chr(29). chr(35).chr(38). chr(0);
+			$printer->setHorizontalTab($tabs);
+			$this->negrita2($printer, "ZONAS");$printer->tabularH();
+			$this->negrita2($printer, "PROGR");$printer->tabularH();
+			$this->negrita2($printer, "M.MAR");$printer->tabularH();
+			$this->negrita2($printer, "TOL");$printer->tabularH();
+			$this->negrita2($printer, "MUL");$printer->tabularH();
+			$this->negrita2($printer, "PROGR");$printer->tabularH();
+			$this->negrita2($printer, "T.MAR");$printer->tabularH();	
+			$this->negrita2($printer, "MUL");$printer->tabularH();
+			$this->negrita2($printer, "TOTAL");		
+			//$printer->setReverseColors(false);
+			$this->negrita2($printer, "\n");
 			$this->lineaSeparacion1($printer);
 			/**/
 			
+			$tabs = chr(6). chr(11). chr(16). chr(20). chr(25). chr(29). chr(35). chr(38). chr(0);
+			$printer->setHorizontalTab($tabs);
+			
 			$regresando = FALSE;
-			//print_r($controladas);
 			$tota_pagar = 0;
-			foreach($controladas as $obj){
-				print_r($obj);
+			$item = 0;
+			foreach($mis_controladas as $obj)
+			{
 				if($obj['codi_senti'] == 1 AND $regresando == FALSE){
 					$this->lineaSeparacion1($printer);
 					$regresando = TRUE;
-				}
-				$this->negrita2($printer, $obj['abre_geoce'] ." ");				
-				
-				/*																						//<--LINUX
-				$fech_progr = date("H:i:s d-m-Y", strtotime($this->_zonaHoraria, $obj['fech_progr']));
-				$hora_progr = substr($fech_progr, 0, 5);
-				*/
-				/*																						//<--WINDOWs*/
+				}				
+				//$fech_progr = date("H:i:s d-m-Y", strtotime($this->_zonaHoraria, $obj['fech_progr']));
+				//$hora_progr = substr($fech_progr, 0, 5);
+							
+				/*IMPRIMIR CONTROLADAS*/
+				$this->negrita2($printer, $obj['abre_geoce']);$printer->tabularH();
+				//<--WINDOWs	
 				$fech_progr = $obj['fech_progr'];
 				$hora_progr = substr($fech_progr, 11, 5);
-				/**/
-				$this->letra2($printer, $hora_progr ." ");
-				
-				
-				$minutos = 0;
-				$multa = 0;
-				
+				$this->letra2($printer, $hora_progr);$printer->tabularH();
 				if($obj['fech_contr'] != null){
-					/*																						//<--LINUX
-					$fech_contr = date("H:i:s d-m-Y", strtotime($this->_zonaHoraria, $obj['fech_contr']));
-					$hora_contr = substr($fech_contr, 0, 5);
-					$this->letra2($printer, $hora_contr);
-					
-					
-					$minutos = floor(($obj['fech_contr'] - $obj['fech_progr']) / 60);
-					*/
-					/*																						//<--WINDOWs*/
+					//$fech_contr = date("H:i:s d-m-Y", strtotime($this->_zonaHoraria, $obj['fech_contr']));
+					//$hora_contr = substr($fech_contr, 0, 5);
+					//$this->letra2($printer, $hora_contr);					
+					//<--WINDOWs
 					$fech_contr = $obj['fech_contr'];
 					$hora_contr = substr($fech_contr, 11, 5);
-					$this->letra2($printer, $hora_contr);
-					
-					
-					$minutos = floor((strtotime($fech_contr) - strtotime($fech_progr)) / 60);
-					/**/
-					
+					$this->letra2($printer, $hora_contr);					
 				} else {
-					$this->negrita2($printer, "--:--");
+					$this->letra2($printer, "--:--");
 				}
-				
-				$tolerancia = 0;
+				$printer->tabularH();
 				if($obj['minu_toler'] > 0){
-					$tolerancia = $obj['minu_toler'];
-					$this->negrita2($printer, " ". sprintf("%'.03d", $tolerancia));
+					$tolerancia = sprintf("%'.03d", $obj['minu_toler']);
+					$this->letra2($printer, $tolerancia);
 				} else {
-					$this->letra2($printer, " ---");
+					$this->letra2($printer, "---");
 				}
+				$printer->tabularH();
 				
+				$minutos = $obj['dife_contro'];
+				$multa = 0;				
 				if($obj['minu_toler'] > 0){
-					$this->letra2($printer, " ---");
+					$this->letra2($printer, "---");
 				} else {
 					if($minutos > 0){
-						$this->negrita2($printer, "  ". $minutos);
+						$minutos = sprintf("%'.03d", $minutos);
+						$this->negrita2($printer, $minutos);
 						$multa = $minutos * 1000;
 						$tota_pagar = $tota_pagar + $multa;
 					} else {
-						$this->letra2($printer, " ---");
+						$this->letra2($printer, "---");
 					}
 				}
+				$printer->tabularH();
+				/*====================*/
 				
-				if($multa > 0){
-					$this->negrita2($printer, " ". $multa ." \n");
-				} else {
-					$this->negrita2($printer, "\n");
-				}
-				/*
 				
+				
+				/*TUS DATOS*/
+				
+				//<--WINDOWs
+				if(isset($tus_controladas))
+				{
+					$fech_progr = $tus_controladas[$item]['fech_progr'];
+					$hora_progr = substr($fech_progr, 11, 5);
+					$this->letra2($printer, $hora_progr);$printer->tabularH();
+					if($tus_controladas[$item]['fech_contr'] != null){
+						//$fech_contr = date("H:i:s d-m-Y", strtotime($this->_zonaHoraria, $tus_controladas[$item]['fech_contr']));
+						//$hora_contr = substr($fech_contr, 0, 5);
+						//$this->letra2($printer, $hora_contr);					
+						//<--WINDOWs
+						$fech_contr = $tus_controladas[$item]['fech_contr'];
+						$hora_contr = substr($fech_contr, 11, 5);
+						$this->letra2($printer, $hora_contr);					
+					} else {
+						$this->letra2($printer, "--:--");
+					}
+					$printer->tabularH();
 					
-				
-				if($obj['minu_toler'] > 0){
-					$this->titulo3($printer, $hhmm);
-					$this->negrita1($printer, "+". $obj['minu_toler'] ." ");
-					$control = $obj['nomb_geoce'];					
+					$minutos = $tus_controladas[$item]['dife_contro'];
+					if($tus_controladas[$item]['minu_toler'] > 0){
+						$this->letra2($printer, "---");
+					} else {
+						if($minutos > 0){
+							$minutos = sprintf("%'.03d", $minutos);
+							$this->negrita2($printer, $minutos);
+						} else {
+							$this->letra2($printer, "---");
+						}
+					}
+					$printer->tabularH();					
 				} else {
-					$this->titulo3($printer, $hhmm ."  ");
-					$control = $obj['nomb_geoce'];
+					$this->letra2($printer, "--:--");$printer->tabularH();
+					$this->letra2($printer, "--:--");$printer->tabularH();
+					$this->letra2($printer, "---");$printer->tabularH();
 				}
-				$this->titulo3($printer, substr($control, 0, 14) ."\n");
-				*/
+				/*=========*/
+				if($multa > 0){
+					$multa = sprintf("%'. 6d", $multa);
+					$this->negrita2($printer, $multa);
+				}
+				$this->negrita2($printer, "\n");
+				
+				$item++;
 			}
+			/*
+			*/
 			
 				$this->lineaSeparacion1($printer);
 				$printer->setLineSpacing();
 				$printer->setJustification(Printer::JUSTIFY_CENTER);
 				$this->negrita2($printer, "POR PAGAR : $");
 				$this->letra2($printer, $tota_pagar .".-\n");
-			$printer->setJustification(Printer::JUSTIFY_LEFT);
-			$this->lineaSeparacion2($printer);
+			$printer->setJustification(Printer::JUSTIFY_LEFT);		
+			/*TU SERVICIO*/
+			if(isset($tu_servicio))
+			{
+				$printer->setLineSpacing(5);
+				$this->lineaSeparacion2($printer);
+				$printer->setJustification(Printer::JUSTIFY_CENTER);		
+				$this->negrita2($printer, "SERVICIO ANTERIOR\n");
+				$printer->setJustification(Printer::JUSTIFY_LEFT);
+				$this->lineaSeparacion1($printer);
+				
+				$this->negrita2($printer, "Movil Ant. : ");
+				$this->letra2($printer, $tu_servicio['nume_movil']);			
+				$this->negrita2($printer, "         Patente : ");
+				$this->letra2($printer, $tu_servicio['pate_movil'] ."\n");
+				
+				
+				$inic_servi = new \DateTime($tu_servicio['inic_servi']);
+				$fech_servi = $inic_servi->format('d-m-Y');
+				$hora_servi = $inic_servi->format('H:i');
+				$this->negrita2($printer, "Fecha      : ");
+				$this->letra2($printer, $fech_servi);
+				$this->negrita2($printer, " Hora : ");
+				$this->letra2($printer, $hora_servi ."\n");
+				
+				$this->negrita2($printer, "Conductor  : ");
+				$this->letra2($printer, $tu_servicio['conductor'] ."\n");
+				
+				
+			}
 			/**/
 				//$this->codigoPDF417($printer, $this->testStr);
 				//$this->lineaSeparacion2($printer);
 			/**/
 				//$this->codigoBarras1($printer, "012345678901");
 				//$this->lineaSeparacion2($printer);
-			/**/
+			/**/			
+			$this->lineaSeparacion2($printer);
 			$this->negrita2($printer, "INF. Impreso: ");
 			$this->letra2($printer, date("H:i:s d-m-Y"));
 			$printer->feed(1);

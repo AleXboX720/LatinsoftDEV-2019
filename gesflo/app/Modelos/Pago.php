@@ -21,4 +21,24 @@ class Pago extends Model
 		'updated_at',
 		'deleted_at'
 	];
+
+	public static function _crear($s, $c, $m, $t, $n, $p, $d, $u)
+	{
+		try
+        {
+            Pago::create([
+                'codi_servi' => $s,
+                'codi_circu' => $c,
+                'nume_movil' => $m,
+
+                'tipo_pago'  => $t,
+                'nota_pago'  => $n,
+                'pago_total' => $p,
+                'desc_total' => $d,
+                'user_modif' => $u
+            ]);
+        } catch (\Exception $e){
+            return response('No se Encontro Programada...!!!', 500);
+        }
+	}
 }

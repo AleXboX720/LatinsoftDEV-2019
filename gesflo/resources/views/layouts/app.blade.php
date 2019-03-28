@@ -27,8 +27,16 @@
     <link rel="stylesheet" href="adminlte/css/AdminLTE.min.css">
 
     <link rel="stylesheet" href="adminlte/css/myStile.css">
+
+
+<style type="text/css">
+    .fondo{
+        background-image: url("{{ asset('adminlte/img/lock.png') }}"));
+    }
+</style>
 </head>
-<body>
+
+<body class='fondo'>
     <div class="container">
         @yield('content')
     </div>

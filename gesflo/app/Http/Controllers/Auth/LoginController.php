@@ -73,7 +73,7 @@ class LoginController extends Controller
 
     public function showLoginForm()
     {
-        return view('controlAcceso.vista');
-        //return view('controlAcceso.vista2');
+        //return view('controlAcceso.vista');
+        return view('controlAcceso.vista2');
     }
 }

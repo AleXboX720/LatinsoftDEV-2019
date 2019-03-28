@@ -16,5 +16,25 @@ class Programada extends Model
 							'latitud', 'longitud', 'grad_angul', 'velo_contr', 'procesado', 'multado'
 						];
 
+	public static function _crear($programada)
+    {
+    	try
+        {
+	        $obj = new Programada($programada);
+	        Programada::create([
+	            'codi_circu' => $obj->codi_circu,
+	            'codi_senti' => $obj->codi_senti,
+	            'codi_ruta'  => $obj->codi_ruta,
+	            'codi_geoce' => $obj->codi_geoce,
+	            'minu_toler' => $obj->minu_toler,
+	            'fech_progr' => date('Y-m-d H:i:s', $obj->fech_progr),
+	            'codi_servi' => $obj->codi_servi,
+	            'nume_movil' => $obj->nume_movil
+	        ]);
+        } catch (\Exception $e){
+            return response('No se Encontro Programada...!!!', 500);
+        }
+	}
+
 	
 }
