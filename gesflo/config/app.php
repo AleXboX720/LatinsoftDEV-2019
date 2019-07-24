@@ -15,6 +15,9 @@ return [
 
     'name' => env('APP_NAME', 'LatinSoft CHL'),
 
+
+    'version' => env('APP_VERSION', 'X'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -65,7 +68,7 @@ return [
     |
     */
 
-    'timezone' => 'America/Santiago',
+    'timezone' => 'America/Asuncion',
 
     /*
     |--------------------------------------------------------------------------

@@ -2,38 +2,135 @@ var lstIniciados = [];
 var lstServiciosProcesar = [];
 
 $(document).ready(function(){
-	$('#btnProcesar').click(function(e){
-		console.clear();
-		var finalizados = finalizarServicios();
-		finalizados.done(function(data, textStatus, jqXHR){
+	$('#btnAnalizar').click(function(e){
+    	e.preventDefault();
+		var listado = analizarServicios();
+		listado.done(function(data, textStatus, jqXHR){
+			console.dir(data);
 			if(data.total > 0){
-				var nume_movil = $('#movi_busca').val();
-				var procesar = procesarServicio(nume_movil);
-				procesar.done(function(data, textStatus, jqXHR){
-					$.each(data.listado, function(i, servicio){
-						var expediciones = listarExpediciones2(servicio);
-						expediciones.done(function(data, textStatus, jqXHR){
-							$.each(data.listado, function(i, expedicion){
-						        var marcadas = listarArribos(expedicion);
-						        marcadas.done(function(data, textStatus, jqXHR){
-									animarBarraProgreso(0);
-									var actualizadas = actualizarProgramadas(data);
-									actualizadas.done(function(data, textStatus, jqXHR){
-										//alert(data.status);
-										$('#modal_procesar').modal('hide');
-									});
-									animarBarraProgreso((100 / data.total) * data.total, data.nume_movil);
-								
-								});
-							});
-						});
-					});
-				});
+				$('#btnProcesar').prop('disabled', false);
+				$('#total_tareas').html(data.total);
+				var listaHTML = _lstHtmlServiciosProcesar(data.servicios);
+				$('#tareasProcesar').html(listaHTML);
 			}
-		});
-		setTimeout(listarServicios, 2000);
+		});		
+		//setTimeout(listarServicios, 4000);
 	});
 });
+
+$(document).ready(function(){
+	$('#btnProcesar').click(function(e){
+    	e.preventDefault();
+    	$('#tareasProcesar a').each(function(i, element){
+    		var codi_servi = $(this).data('codi_servi')
+		    var codi_circu = $(this).data('codi_circu');
+		    var nume_movil = $(this).data('nume_movil');
+		    var pate_movil = $(this).data('pate_movil');
+		    var codi_equip = $(this).data('codi_equip');
+		    
+	    	setTimeout(function(){
+	    		var procesado = procesarServicio(codi_circu, nume_movil, pate_movil, codi_equip, codi_servi);
+	    		procesado.done(function(data, textStatus, jqXHR){
+	    			$(this).fadeOut();
+					$('#btnProcesar').prop('disabled', true);
+	    		});
+	    	}, 5000 * i);
+    	});
+	});
+});
+
+function procesarServicio(codi_circu, nume_movil, pate_movil, codi_equip, codi_servi)
+{
+	var url = 'servicios/procesar';
+
+	var parametros = {'codi_circu' : codi_circu, 'nume_movil' : nume_movil, 'pate_movil' : pate_movil, 'codi_equip' : codi_equip, 'codi_servi' : codi_servi};
+	var token = document.getElementsByName('_token');
+	return $.ajax({
+      url: url,
+      headers : {'X-CSRF-TOKEN' : token[0].value},
+      type: 'POST',
+      data: parametros,
+      dataType: 'json',
+      beforeSend: function(){}
+    })
+	.done(function(data, textStatus, jqXHR){
+		console.dir(data);
+	})
+	.always(function(a, textStatus, b) {
+		//TODO
+	})
+	.fail(function(jqXHR, textStatus, errorThrown){
+		if (jqXHR.status == 404) {			
+			console.log(jqXHR.responseText);
+		}
+	});
+}
+
+function analizarServicios()
+{
+	var fech_servi = $('#fech_servi').val();
+	var codi_circu = parseInt($('#codi_circu').val());
+
+	var url = 'servicios/analizar';
+	var token = document.getElementsByName('_token');
+
+	var parametros = {'fech_servi' : fech_servi, 'codi_circu' : codi_circu};
+	return $.ajax({
+		url: url,
+		headers : {'X-CSRF-TOKEN' : token[0].value},
+		type: 'POST',
+		data: parametros,
+		dataType: 'json',
+		beforeSend: function(){
+			$('#tareasProcesar').html('');
+			$('#total_tareas').html('');
+		}
+	})
+	.done(function(data, textStatus, jqXHR){
+		var title = 'Nota';
+		toastr.success(data.msg, title);
+	})
+	.always(function(a, textStatus, b) {
+		//TODO
+	})
+	.fail(function(jqXHR, textStatus, errorThrown){
+		if (jqXHR.status == 404) {
+			var title = 'Felicidades';
+			toastr.info(jqXHR.responseText, title);
+		}
+	});
+}
+
+
+/*
+function finalizarServicio(nume_movil)
+{
+	var url = 'servicios/finalizar2';
+	var token = document.getElementsByName('_token');
+
+	var parametros = {'fech_servi' : fech_servicio, 'codi_circu' : codi_circuito, 'nume_movil' : nume_movil};
+	return $.ajax({
+		url: url,
+		headers : {'X-CSRF-TOKEN' : token[0].value},
+		type: 'POST',
+		data: parametros,
+		dataType: 'json',
+		beforeSend: function(){}
+	})
+	.done(function(data, textStatus, jqXHR){
+		var title = 'Nota';
+		toastr.success(data.msg, title);
+	})
+	.always(function(a, textStatus, b) {
+		//TODO
+	})
+	.fail(function(jqXHR, textStatus, errorThrown){
+		if (jqXHR.status == 404) {
+			var title = 'Felicidades';
+			toastr.info(jqXHR.responseText, title);
+		}
+	});
+}
 
 function finalizarServicios(){
 	var url = 'servicios/finalizar';
@@ -221,7 +318,7 @@ function actualizarProgramadas(data){
 		}
 	});
 }
-
+*/
 /*###################################################################################################*/
 function animarBarraProgreso(porcentaje, movil){
 	$('#barraProsesandoServicios').css({'width': porcentaje +'%'});
@@ -238,14 +335,16 @@ function _lstHtmlServiciosProcesar(listado){
 				elHtml += 'data-codi_circu="' +obj.codi_circu+ '" ';
 				elHtml += 'data-codi_servi="' +obj.codi_servi+ '" ';
 				elHtml += 'data-nume_movil="' +obj.nume_movil+ '" ';
-				elHtml += 'data-pate_movil="' +obj.pate_movil+ '">';
+				elHtml += 'data-pate_movil="' +obj.pate_movil+ '" ';
+				elHtml += 'data-codi_equip="' +obj.codi_equip+ '">';
 			elHtml += '<b>Maq ' +obj.nume_movil+ '</b>';
 			elHtml += '<small class="pull-right">' +obj.nume_movil+ '%</small>';
 			elHtml += '<div class="progress lg">';
-				elHtml += '<div class="progress-bar progress-bar-aqua" style="width: ' +obj.nume_movil+ '%" aria-valuenow="' +obj.nume_movil+ '" role="progressbar">';
+				//elHtml += '<div class="progress-bar progress-bar-aqua" style="width: ' +obj.nume_movil+ '%" aria-valuenow="' +obj.nume_movil+ '" role="progressbar">';
+				elHtml += '<div class="progress-bar progress-bar-aqua" style="width: 0%" aria-valuenow="0" role="progressbar">';
 				elHtml += '</div>';
 			elHtml += '</div>';
 		elHtml += '</a>';
 	});
-  return elHtml;
+	return elHtml;
 }

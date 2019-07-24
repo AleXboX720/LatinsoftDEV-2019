@@ -51,28 +51,29 @@
 
 		<li class="treeview {{ Request::is('recaudaciones') ? 'active' : '' }}">
 			<a href="#">
-				<i class="fa fa-money fa-fw"></i> Recaudacion
-					<span class="pull-right-container"><i class="fa fa-angle-left pull-right">
-				</i>
-			</span>
+          <i class="fa fa-money fa-fw"></i> <span>Recaudacion</span>
+          <span class="pull-right-container">
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
 			</a>
 			<ul class="treeview-menu">
-				<li><a href="{{ route('recaudaciones.estadisticas') }}"><i class="fa fa-line-chart fa-fw"></i> <span>Estadisticas</span></a></li>
+				<li><a href="{{ route('recaudaciones.estadisticas') }}"><i class="fa fa-line-chart fa-fw"></i> Estadisticas</a></li>
 				<li><a href="{{ route('listar.multas') }}"><i class="fa fa-handshake-o fa-fw"></i> Multas</a></li>
-				<li><a href="#">Cuotas</a></li>
-				<li><a href="#">Otros</a></li>                
+				<li><a href="#"><i class="fa fa-tasks fa-fw"></i> Cuotas</a></li>
+				<li><a href="#"><i class="fa fa-pie-chart fa-fw"></i> Otros</a></li>
 			</ul>
 		</li>
 
       <li class="treeview {{ Request::is('gestion/servicios') ? 'active' : '' }}">
-        <a href="#"><i class="fa fa-sitemap fa-fw"></i> <span>Control de Flota</span>
+        <a href="#">
+          <i class="fa fa-road fa-fw"></i> <span>Control de Flota</span>
           <span class="pull-right-container">
-              <i class="fa fa-angle-left pull-right"></i>
-            </span>
+            <i class="fa fa-angle-left pull-right"></i>
+          </span>
         </a>
         <ul class="treeview-menu">
-			<li><a href="{{ route('servicios.index') }}"><i class="fa fa-files-o fa-fw"></i> Servicios</a></li>
-			<li><a href="#"><i class="fa fa-line-chart fa-fw"></i> <span>Estadisticas</span></a></li>
+    			<li><a href="{{ route('servicios.index') }}"><i class="fa fa-files-o fa-fw"></i> Servicios</a></li>
+    			<li><a href="#"><i class="fa fa-line-chart fa-fw"></i>Estadisticas</a></li>
         </ul>
       </li>
 

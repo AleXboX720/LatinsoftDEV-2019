@@ -1,12 +1,12 @@
 @extends('admin.layout')
 
 @section('content')
-	@include('servicios.modalForm')
-	@include('servicios.modalProcesar')
-
-	@include('servicios.modalMulta')
-	@include('servicios.modalInfor')
-	@include('servicios.modalMapa')
+	@include('servicios.modal.agregar')
+	@include('servicios.modal.procesar')
+	@include('servicios.modal.informe')
+	@include('servicios.modal.multa')
+	@include('servicios.modal.mapa')
+	
 	<div class="alert" id="alert"></div>
 	
     <div class="row">
@@ -41,12 +41,10 @@
 	<script src="{{{ asset('js/servicios/funProcesar.js') }}}"></script>
 
 	<script src="{{{ asset('js/servicios/lstServicios.js') }}}"></script>
-	<script src="{{{ asset('js/servicios/lstPuntosControl.js') }}}"></script>
 
 
 
 
-	
 
 	<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyCpcjpET_egxZ-KiFlQwio0x7HLFjcphgc"></script>
 	
@@ -57,5 +55,4 @@
 	<script src="{{{ asset('js/gmaps/funModalMapa.js') }}}"></script>
 	<script src="{{{ asset('js/gmaps/mapaLathinSoft.js') }}}"></script>
 	<script src="{{{ asset('js/gmaps/funGeozonas.js') }}}"></script>
-
 @endsection

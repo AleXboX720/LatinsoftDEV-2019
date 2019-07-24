@@ -1,16 +1,17 @@
 <?php
-
 namespace App\Http\Controllers\Recaudaciones;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Modelos\Vistas\ViewMultasRecaudadas;
+use App\Modelos\DBServicios\ViewMultasRecaudadas;
+//use App\Modelos\Vistas\ViewMultasRecaudadas;
 use App\Modelos\Vistas\ViewUsuarios;
 
 use App\Modelos\Multa;
+use App\Modelos\Pago;
 
-
+use Carbon\Carbon;
 class RecaudacionesController extends Controller
 {
 
@@ -29,31 +30,44 @@ class RecaudacionesController extends Controller
         //if($request->ajax()){
             try
             {
-                $user_modif = $request->user_modif;
-                $fech_desde = strtotime('+0 day' , strtotime($request->fech_desde));
-                $fech_hasta = strtotime('+1 day' , strtotime($request->fech_hasta));
+                $u = $request->user_modif;
+				$d = Carbon::parse($request->fech_desde)->toDateTimeString();
+				$h = Carbon::parse($request->fech_hasta)->addDays(1)->toDateTimeString();				
+				
+                $multas = ViewMultasRecaudadas::_listar($u, $d, $h);
 
-                $multas = ViewMultasRecaudadas::_listar($user_modif, $fech_desde, $fech_hasta);
                 $total = $multas->count();
                 if($total > 0)
                 {
                     $moviles = [];
                     $multados = [];
                     $cobrados = [];
+
+                    $totales = [];
+                    $total_multas = 0;
+                    $total_cobros = 0;
                     foreach ($multas as $obj) {
+                        $valo_multa = intval($obj['multado']);
+                        $valo_cobra = intval($obj['cobrado']);
+                        $total_multas = $total_multas + $valo_multa;
+                        $total_cobros = $total_cobros + $valo_cobra;
                         array_push($moviles, $obj['nume_movil']);
-                        array_push($multados, intval($obj['multado']));
-                        array_push($cobrados, intval($obj['cobrado']));
+                        array_push($multados, $valo_multa);
+                        array_push($cobrados, $valo_cobra);
                     }
+                    $totales['total_multas'] = $total_multas;
+                    $totales['total_cobros'] = $total_cobros;
                     unset($multas);
 
-                    $mensaje = 'Hay: ' .$total. ' Moviles con Multas encontradas.';                    
+                    //$mensaje = 'Hay: ' .$total. ' Moviles con Multas encontradas.';
                     return response()->json([
                             'moviles'   => $moviles,
-                            'multados'   => $multados,
-                            'cobrados'   => $cobrados,
+                            'multados'  => $multados,
+                            'cobrados'  => $cobrados,
+                            'totales'   => $totales,
+                            //'fechas'    => $fechas,
                             //'total'     => $total,
-                            'msg'       => $mensaje
+                            //'msg'       => $mensaje
                     ], 200);
                 } else {
                     return response('No se Encontraron Multas para Este Dia!!!', 404);

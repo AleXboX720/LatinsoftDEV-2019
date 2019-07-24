@@ -9,6 +9,7 @@ use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 //use Mike42\Escpos\PrintConnectors\FilePrintConnector;
 use Mike42\Escpos\Printer;
 
+use Carbon\Carbon;
 class InformesController extends ConfiguracionController
 {
 	private $_titulo = "INFORME DEL SERVICIO\n";
@@ -23,24 +24,20 @@ class InformesController extends ConfiguracionController
 		//$connector = new FilePrintConnector($this->nomb_impre);
 		$printer = new Printer($connector);
 		
-		try {
+		try 
+		{
 			$mi_servicio = $request['mi_servicio'];
 			$mis_controladas = $request['mis_controladas'];
 			$tu_servicio = $request['tu_servicio'];
 			$tus_controladas = $request['tus_controladas'];
 
-			$inic_servi = new \DateTime($mi_servicio['inic_servi']);
-			$fech_servi = $inic_servi->format('d-m-Y');
-			$hora_servi = $inic_servi->format('H:i');
-			//$fech_servi = date("d-m-Y", strtotime($this->_zonaHoraria, $mi_servicio['inic_servi']));
-			//$hora_servi = date("H:i", strtotime($this->_zonaHoraria, $mi_servicio['inic_servi']));
-			
-			$codi_servi = $mi_servicio['codi_servi'];
-						
-			
+			$inic_servi = Carbon::createFromTimeString($mi_servicio['inic_servi'])->toDateTimeString();
+			$fech_servi = Carbon::createFromTimeString($mi_servicio['inic_servi'])->format('d-m-Y');
+			$hora_servi = Carbon::createFromTimeString($mi_servicio['inic_servi'])->format('H:i');
+					
 			$this->titulo1($printer, $this->_titulo, Printer::JUSTIFY_CENTER);
 			$this->lineaSeparacion2($printer);
-			$printer->setLineSpacing(44);
+			$printer->setLineSpacing(46);
 			
 			$printer->setJustification(Printer::JUSTIFY_LEFT);
 			$this->negrita2($printer, "Movil      : ");
@@ -88,23 +85,14 @@ class InformesController extends ConfiguracionController
 				if($obj['codi_senti'] == 1 AND $regresando == FALSE){
 					$this->lineaSeparacion1($printer);
 					$regresando = TRUE;
-				}				
-				//$fech_progr = date("H:i:s d-m-Y", strtotime($this->_zonaHoraria, $obj['fech_progr']));
-				//$hora_progr = substr($fech_progr, 0, 5);
-							
+				}							
 				/*IMPRIMIR CONTROLADAS*/
-				$this->negrita2($printer, $obj['abre_geoce']);$printer->tabularH();
-				//<--WINDOWs	
-				$fech_progr = $obj['fech_progr'];
-				$hora_progr = substr($fech_progr, 11, 5);
+				$this->letra2($printer, $obj['abre_geoce']);$printer->tabularH();
+				
+				$hora_progr = Carbon::createFromTimeString($obj['fech_progr'])->format('H:i');				
 				$this->letra2($printer, $hora_progr);$printer->tabularH();
 				if($obj['fech_contr'] != null){
-					//$fech_contr = date("H:i:s d-m-Y", strtotime($this->_zonaHoraria, $obj['fech_contr']));
-					//$hora_contr = substr($fech_contr, 0, 5);
-					//$this->letra2($printer, $hora_contr);					
-					//<--WINDOWs
-					$fech_contr = $obj['fech_contr'];
-					$hora_contr = substr($fech_contr, 11, 5);
+					$hora_contr = Carbon::createFromTimeString($obj['fech_contr'])->format('H:i');
 					$this->letra2($printer, $hora_contr);					
 				} else {
 					$this->letra2($printer, "--:--");
@@ -133,25 +121,14 @@ class InformesController extends ConfiguracionController
 					}
 				}
 				$printer->tabularH();
-				/*====================*/
-				
-				
-				
+				/*====================*/				
 				/*TUS DATOS*/
-				
-				//<--WINDOWs
 				if(isset($tus_controladas))
 				{
-					$fech_progr = $tus_controladas[$item]['fech_progr'];
-					$hora_progr = substr($fech_progr, 11, 5);
+					$hora_progr = Carbon::createFromTimeString($tus_controladas[$item]['fech_progr'])->format('H:i');	
 					$this->letra2($printer, $hora_progr);$printer->tabularH();
 					if($tus_controladas[$item]['fech_contr'] != null){
-						//$fech_contr = date("H:i:s d-m-Y", strtotime($this->_zonaHoraria, $tus_controladas[$item]['fech_contr']));
-						//$hora_contr = substr($fech_contr, 0, 5);
-						//$this->letra2($printer, $hora_contr);					
-						//<--WINDOWs
-						$fech_contr = $tus_controladas[$item]['fech_contr'];
-						$hora_contr = substr($fech_contr, 11, 5);
+						$hora_contr = Carbon::createFromTimeString($tus_controladas[$item]['fech_contr'])->format('H:i');
 						$this->letra2($printer, $hora_contr);					
 					} else {
 						$this->letra2($printer, "--:--");
@@ -184,19 +161,15 @@ class InformesController extends ConfiguracionController
 				
 				$item++;
 			}
-			/*
-			*/
-			
-				$this->lineaSeparacion1($printer);
-				$printer->setLineSpacing();
-				$printer->setJustification(Printer::JUSTIFY_CENTER);
-				$this->negrita2($printer, "POR PAGAR : $");
-				$this->letra2($printer, $tota_pagar .".-\n");
+			$this->lineaSeparacion1($printer);
+			$printer->setJustification(Printer::JUSTIFY_CENTER);
+			$this->negrita2($printer, "POR PAGAR : $");
+			$this->letra2($printer, $tota_pagar .".-\n");
 			$printer->setJustification(Printer::JUSTIFY_LEFT);		
 			/*TU SERVICIO*/
 			if(isset($tu_servicio))
 			{
-				$printer->setLineSpacing(5);
+				$printer->setLineSpacing(6);
 				$this->lineaSeparacion2($printer);
 				$printer->setJustification(Printer::JUSTIFY_CENTER);		
 				$this->negrita2($printer, "SERVICIO ANTERIOR\n");
@@ -206,12 +179,10 @@ class InformesController extends ConfiguracionController
 				$this->negrita2($printer, "Movil Ant. : ");
 				$this->letra2($printer, $tu_servicio['nume_movil']);			
 				$this->negrita2($printer, "         Patente : ");
-				$this->letra2($printer, $tu_servicio['pate_movil'] ."\n");
+				$this->letra2($printer, $tu_servicio['pate_movil'] ."\n");				
 				
-				
-				$inic_servi = new \DateTime($tu_servicio['inic_servi']);
-				$fech_servi = $inic_servi->format('d-m-Y');
-				$hora_servi = $inic_servi->format('H:i');
+				$fech_servi = Carbon::createFromTimeString($tu_servicio['inic_servi'])->format('d-m-Y');
+				$hora_servi = Carbon::createFromTimeString($tu_servicio['inic_servi'])->format('H:i');			
 				$this->negrita2($printer, "Fecha      : ");
 				$this->letra2($printer, $fech_servi);
 				$this->negrita2($printer, " Hora : ");
@@ -231,7 +202,7 @@ class InformesController extends ConfiguracionController
 			/**/			
 			$this->lineaSeparacion2($printer);
 			$this->negrita2($printer, "INF. Impreso: ");
-			$this->letra2($printer, date("H:i:s d-m-Y"));
+			$this->letra2($printer, Carbon::now()->format('H:i:s d-m-Y'));
 			$printer->feed(1);
 			$printer->cut();
 		} finally {

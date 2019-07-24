@@ -11,12 +11,18 @@ class ViewMultasRecaudadas extends Model
 
     protected $fillable = [];
 
-    public static function _listar($user_modif, $d, $h)
+    public static function _listar($u, $d, $h)
     {
+        $d = strtotime('+0 day' , strtotime($d));     //TO TIMESTAMP
+        $h = strtotime('+1 day' , strtotime($h));     //TO TIMESTAMP
+
+        $d = date('Y-m-d H:i:s', $d);
+        $h = date('Y-m-d H:i:s', $h);
         try
         {
-            $listado = ViewMultasRecaudadas::where('user_modif', $user_modif)
-                    ->whereBetween('codi_servi', [$d, $h])
+            $listado = ViewMultasRecaudadas::where('user_modif', $u)
+                    //->whereDate('fecha', $d)
+                    ->whereBetween('fech_multa', [$d, $h])
                     //->orderBy('inic_servi', 'ASC')
                     ->get();
 

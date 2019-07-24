@@ -5,11 +5,19 @@ namespace App\Http\Controllers\Manager;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Modelos\Vistas\ViewListarMoviles;
-use App\Modelos\Vistas\ViewListarPropietarios;
+use App\Http\Responsables\Moviles\Vistas\Home;
+use App\Http\Responsables\Moviles\Vistas\Crear;
+use App\Http\Responsables\Moviles\Vistas\Editar;
+
+
+
+
+use App\Modelos\DBGestra\ViewMoviles;
+use App\Modelos\DBGestra\Movil;
+
+use App\Modelos\DBGestra\ViewPropietarios;
 use App\Modelos\Vistas\ViewListarServicios;
 
-use App\Modelos\Movil;
 use App\Modelos\Propietario;
 
 
@@ -17,28 +25,20 @@ class MovilesController extends Controller
 {
 
     public function index(Request $request)
-    {
-        $data = 
-        [
-            'title'     => 'Manager',
-            'subtitle'  => 'Moviles',
-            'buscare'   => 'pate_movil',
-            'lstCircuitos'   => $this::listadoCircuitos()
-        ];
-        return view('manager.moviles.vista', compact('data'));
+    {        
+        return new Home($request);
     }
 
-    public function create()
+    public function crear(Request $request)
     {
-        $data = 
-        [
-            'title'     => 'Crear',
-            'subtitle'  => 'Movil',
-            'buscare'   => 'pate_movil',
-            'listado'   => ViewListarPropietarios::where('docu_empre', $this->_docu_empre)->orderBy('apel_pater')->pluck('propietario', 'docu_perso')->all()
-        ];
-        return view('manager.moviles.create.vista', compact('data'));
+        return new Crear($request);
     }
+
+    public function editar(Request $request)
+    {
+        return new Editar($request);
+    }
+    /*----------------------------------------------------------------------*/
 
     public function store(Request $request)
     {
@@ -69,8 +69,8 @@ class MovilesController extends Controller
         [
             'title'     => 'Editar',
             'subtitle'  => 'Movil',
-            'movil'     => Movil::find($nume_movil),
-            'listado'   => ViewListarPropietarios::where('docu_empre', $this->_docu_empre)->orderBy('apel_pater')->pluck('propietario', 'docu_perso')->all()
+            'movil'     => Movil::_buscar($nume_movil),
+            'listado'   => ViewPropietarios::where('docu_empre', $this->_docu_empre)->orderBy('apel_pater')->pluck('propietario', 'docu_perso')->all()
         ];
 
         return view('manager.moviles.edit.vista', compact('data'));
@@ -107,7 +107,7 @@ class MovilesController extends Controller
         {
             try
             {
-                $lst = ViewListarMoviles::where('docu_empre', $this->_docu_empre)->get();
+                $lst = ViewMoviles::where('docu_empre', $this->_docu_empre)->get();
 				
                 if($lst->count() > 0){
                     return response()->json([
@@ -130,7 +130,7 @@ class MovilesController extends Controller
             try
             {
                 $pate_movil = $request->pate_movil;
-                $lst = ViewListarMoviles::where('pate_movil', 'LIKE', "%$pate_movil%")
+                $lst = ViewMoviles::where('pate_movil', 'LIKE', "%$pate_movil%")
                             ->where('docu_empre', $this->_docu_empre)
                             ->get();
 

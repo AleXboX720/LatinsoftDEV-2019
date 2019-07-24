@@ -21,7 +21,7 @@ class ViewArribos extends Model
 
             return $listado;
         } catch (\Exception $e){
-            return response('No se Encontro Programada...!!!', 500);
+            return response('No se Encontro Marcadas...!!!', 500);
         }
 	}
 }

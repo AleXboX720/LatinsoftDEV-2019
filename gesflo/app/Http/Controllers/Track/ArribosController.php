@@ -11,15 +11,15 @@ class ArribosController extends Controller
 {
     public function listarArribos(Request $request)
     {
-        //dd($request->toArray());
         if($request->ajax()){
             $expedicion = $request->expedicion;
             try
             {
                 $desde = strtotime ( '-10 minutes' , strtotime($expedicion['inic_exped']));
-                $hasta = strtotime ( '+20 minutes' , strtotime($expedicion['term_exped']));
+                $hasta = strtotime ( '+40 minutes' , strtotime($expedicion['term_exped']));
 
                 $arribos = ViewArribos::_listar($expedicion['codi_equip'], $desde, $hasta);
+
                 if($arribos->count() > 0)
                 {
                     if($expedicion['codi_senti'] == 0)

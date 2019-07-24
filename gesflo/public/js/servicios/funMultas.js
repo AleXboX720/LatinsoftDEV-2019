@@ -69,9 +69,9 @@ $(document).ready(function(){
 		});
 	});
 });
-
+/*
 function imprimirMulta(mi_servicio, mis_controladas, tu_servicio, tus_controladas){
-  var url = 'informe/imprimir';
+  var url = 'multas/imprimir';
   
   var parametros = 
   {
@@ -91,7 +91,7 @@ function imprimirMulta(mi_servicio, mis_controladas, tu_servicio, tus_controlada
     }
   }); 
 }
-
+*/
 function _cargarCampos(){
   if(objMulta != null){
     var servicio = objMulta.mi_servicio.servicio;
@@ -105,20 +105,29 @@ function _cargarCampos(){
     $('#pate_maqui').val(servicio.pate_movil);
 
     $('#nomb_condu').val(servicio.conductor);
-    $('#docu_condu').val(servicio.docu_perso);
+    $('#docu_condu2').val(servicio.docu_perso);
 
     var total = 0;
-	var multas = objMulta.mi_servicio.multas;
-    $.each(multas, function(i, obj){
-      total += obj.tota_multa;
-      if(obj.codi_senti == 0){
-        $('#total_ida').val(obj.tota_multa);
-        $('#pagar_ida').val(obj.tota_multa);
-      }
-      if(obj.codi_senti == 1){
-        $('#total_regre').val(obj.tota_multa);
-        $('#pagar_regre').val(obj.tota_multa);
-      }
+    var las_multas = objMulta.mi_servicio.multas;
+    $.each(las_multas, function(i, multa){
+      console.dir(multa);
+  		multado 	= 0;
+  		pagada 	= 0;
+  		total 	+= parseInt(multa.tota_multa);
+  		if (typeof multa !== "undefined"){
+  		  multado 	= parseInt(multa.tota_multa);
+  		  pagada 	= parseInt(multa.pagada);
+  		}
+  		if (typeof multa !== "undefined"){
+  		  if(multa.codi_senti == 0){
+  			$('#total_ida').val(multado);
+  			$('#pagar_ida').val(multado);
+  		  }
+  		  if(multa.codi_senti == 1){
+  			$('#total_regre').val(multado);
+  			$('#pagar_regre').val(multado);
+  		  }
+  		}
     });
     $('#tota_pagar').val(total);
   }

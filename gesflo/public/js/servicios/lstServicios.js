@@ -9,7 +9,7 @@ $(document).ready(function(){
 		if(e.which == 13){
 			var nume_movil = $(this).val();
 			if(nume_movil.length > 0){
-				filtrarListado(nume_movil);
+				filtrarServicios();
 			} else {
 				listarServicios();
 			}
@@ -27,7 +27,7 @@ $(document).ready(function(){
 		var pate_movil = row.data('pate_movil');
 		var codi_servi = row.data('codi_servi');
 
-		var busqueda = buscandoServicio(codi_circu, nume_movil, pate_movil, codi_servi);
+		var busqueda = buscarServicio(codi_circu, nume_movil, pate_movil, codi_servi);
 		busqueda.done(function(data, textStatus, jqXHR){
 			$('#modal_multa').modal();
 			objMulta = data;
@@ -45,7 +45,7 @@ $(document).ready(function(){
 		var pate_movil = row.data('pate_movil');
 		var codi_servi = row.data('codi_servi');
 
-		var busqueda = buscandoServicio(codi_circu, nume_movil, pate_movil, codi_servi);
+		var busqueda = buscarServicio(codi_circu, nume_movil, pate_movil, codi_servi);
 		busqueda.done(function(data, textStatus, jqXHR){    	
 			$("#modal_informe").modal();
 			objInformeServicio = data;
@@ -76,7 +76,7 @@ $(document).ready(function(){
 	    var pate_movil = row.data('pate_movil');
 	    var codi_servi = row.data('codi_servi');
 
-		var busqueda = buscandoServicio(codi_circu, nume_movil, pate_movil, codi_servi);
+		var busqueda = buscarServicio(codi_circu, nume_movil, pate_movil, codi_servi);
 	    busqueda.done(function(data, textStatus, jqXHR){
 	    	$('#modal_mapa').modal();
 			objInformeServicio = data;
@@ -102,16 +102,27 @@ $(document).ready(function(){
 	    var pate_movil = row.data('pate_movil');
 	    var codi_servi = row.data('codi_servi');
 
-	    var busqueda = buscandoServicio(codi_circu, nume_movil, pate_movil, codi_servi);
-	    busqueda.done(function(data, textStatus, jqXHR){
-		  var mi_servicio = data.mi_servicio;
-		  var servicio = mi_servicio.servicio;
-		  var controladas = mi_servicio.controladas;
-
-	      imprimirServicio(servicio, controladas); 
-	    });
+		imprimirServicio(codi_circu, nume_movil, pate_movil, codi_servi);
 	});
 });
+
+function imprimirServicio(codi_circu, nume_movil, pate_movil, codi_servi){
+	var url = 'servicios/imprimir';
+	
+	var parametros = {'codi_circu' : codi_circu, 'nume_movil' : nume_movil, 'pate_movil' : pate_movil, 'codi_servi' : codi_servi};
+	var token = document.getElementsByName("_token");
+	$.ajax({
+		url: url,
+		headers : {'X-CSRF-TOKEN' : token[0].value},
+		type: 'POST',
+		data: parametros,
+		beforeSend: function(){},
+		success: function(){},
+		error: function(){
+			mostrarMensaje('ALGO SALIO MAL AL IMPRIMIR', 'alert-danger');
+		}
+	});	
+}
 /*FIN*/
 /*ELIMINAR EL SERVICIO*/
 $(document).ready(function(){
@@ -140,32 +151,30 @@ $(document).ready(function(){
 /*FIN*/
 /*###################################################################################################*/
 function listarServicios(){
-  var url = 'servicios/listar';
+	var fech_servi = $('#fech_servi').val();
+	var codi_circu = $('#codi_circu').val();
   
-  var parametros = {'fech_servi' : fech_servicio, 'codi_circu' : codi_circuito};
-    
+	var parametros = {'fech_servi' : fech_servi, 'codi_circu' : codi_circu};
+	var token = document.getElementsByName("_token");
+    var url = 'servicios/listar';
 	$.ajax({
 		url: url,
-		type: 'GET',
+		type: 'POST',
+    	headers : {'X-CSRF-TOKEN' : token[0].value},
 		data: parametros,
 		dataType: 'json',
 		beforeSend: function(){
 			$('#listadoServicios').html('');
 		}
 	})
-	.done(function(data, textStatus, jqXHR ){		
-		lstServicios = data.listado;
-
+	.done(function(data, textStatus, jqXHR){
 		//var title = 'Felicidades';
 		//toastr.info(data.msg, title);
 
 		var listaHTML = _lstHtmlServicios(data.listado);
 		$('#listadoServicios').html(listaHTML);
 	})
-	.always(function( a, textStatus, b ) {
-		//TODO
-		$('#btnProcesar').hide();
-	})
+	.always(function( a, textStatus, b ){})
 	.fail(function( jqXHR, textStatus, errorThrown){
 		if (jqXHR.status == 404) {
 			var title = 'Nota';
@@ -176,16 +185,18 @@ function listarServicios(){
 	});
 }
 
-function filtrarListado(nume_movil){
-  var url = 'servicios/filtrar';
-	var token = document.getElementsByName('_token');
+function filtrarServicios(){
+	var nume_movil = $('#movi_busca').val();
+	var fech_servi = $('#fech_servi').val();
+	var codi_circu = $('#codi_circu').val();
   
-  var parametros = {'fech_servi' : fech_servicio, 'codi_circu' : codi_circuito, 'nume_movil' : nume_movil};
-
+	var parametros = {'fech_servi' : fech_servi, 'codi_circu' : codi_circu, 'nume_movil' : nume_movil};
+	var token = document.getElementsByName("_token");
+	var url = 'servicios/filtrar';
 	$.ajax({
 		url: url,
-		headers : {'X-CSRF-TOKEN' : token[0].value},
 		type: 'POST',
+		headers : {'X-CSRF-TOKEN' : token[0].value},
 		data: parametros,
 		dataType: 'json',
 		beforeSend: function(){
@@ -198,24 +209,11 @@ function filtrarListado(nume_movil){
 		var title = 'Felicidades';
 		toastr.info(data.msg, title);
 
-		/*
-		var hayServicios = false;
-		$.each(data.listado, function(i, servicio){
-			if(servicio.procesar === 1){
-				hayServicios = true;
-			}
-		});
-		if(hayServicios){
-			$('#btnProcesar').show();
-		} else {
-			$('#btnProcesar').hide();
-		}
-		*/
 		var listaHTML = _lstHtmlServicios(data.listado);
 		$('#listadoServicios').html(listaHTML);
 	})
 	.always(function( a, textStatus, b ) {
-			$('#btnProcesar').show();
+		$('#btnProcesar').show();
 	})
 	.fail(function( jqXHR, textStatus, errorThrown){
 		if (jqXHR.status == 404) {
@@ -229,6 +227,7 @@ function _lstHtmlServicios(listado){
 	var elHtml = '';
 	var cont = 0;
 	$.each(listado, function(i, obj){
+		var timestamp = obj.inic_servi;
 		//var fech_inici = new Date(obj.inic_servi * 1000);
 		//var fech_termi = new Date(obj.term_servi * 1000);
 		var fech_inici = new Date(obj.inic_servi);

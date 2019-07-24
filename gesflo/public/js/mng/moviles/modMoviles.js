@@ -80,26 +80,26 @@ function _lstHtmlMoviles(listado){
 	$.each(listado, function(i, obj){
 		if (obj.habilitado == 1)
 		{
-		  elHtml += '<tr class="success" data-idde_objet="' +obj.nume_movil+'">';
+		  elHtml += '<tr class="success" data-nume_movil="' +obj.nume_movil+'" data-pate_movil="' +obj.pate_movil+ '">';
 		} else {
-		  elHtml += '<tr class="danger" data-idde_objet="' +obj.pate_movil+ '">';
-		}
-			elHtml += '<td class="text-center"><b>' +obj.nume_movil+ '</b></td>';
+		  elHtml += '<tr class="danger" data-nume_movil="' +obj.nume_movil+ '" data-pate_movil="' +obj.pate_movil+ '">';
+		}			
 			elHtml += '<td class="text-center"><b>' +obj.pate_movil+ '</b></td>';
+
+			elHtml += '<td class="text-nowrap">';
+			elHtml += '<a href="moviles/editar/' +obj.nume_movil+'" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span></<a>';
+			elHtml += '<a href="#!" class="btn btn-xs btn-danger btnEliminar"><span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></a>';
+			elHtml += '</td>';
+
+			elHtml += '<td class="text-center"><b>' +obj.nume_movil+ '</b></td>';
 			elHtml += '<td class="text-center">' +obj.codi_equip+ '</td>';
 
-			var fech_revis = new Date(obj.fech_revis);
-			var fecha = fech_revis.toLocaleDateString();
-			elHtml += '<td class="text-nowrap text-center">' +fecha+ '</td>';
+			elHtml += '<td class="text-nowrap text-center">' +obj.fech_revis+ '</td>';
 			elHtml += '<td class="text-center hidden-sm hidden-xs">' +obj.anio_movil+ '</td>';
 			elHtml += '<td class="text-nowrap hidden-sm hidden-xs">' +obj.propietario+ '</td>';
 			elHtml += '<td class="text-center">' +obj.imei_equip+ '</td>';
 			elHtml += '<td class="text-center">' +obj.nume_telef+ '</td>';
 			
-			elHtml += '<td class="text-nowrap">';
-			elHtml += '<a href="moviles/' +obj.nume_movil+'/edit" class="btn btn-xs btn-warning"><span class="glyphicon glyphicon-cloud-download" aria-hidden="true"></span></<a>';
-			elHtml += '<a href="#!" class="btn btn-xs btn-danger btnEliminar"><span class="glyphicon glyphicon-remove-sign" aria-hidden="true"></span></a>';
-			elHtml += '</td>';
 
 		elHtml += '</tr>';
 	});

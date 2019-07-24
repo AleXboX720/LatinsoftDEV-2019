@@ -37,6 +37,7 @@ class AnalizarListener
 
     private function _analizarServicios($listado)
     {
+        $minutos = 60 * 10;
         $servicios_iniciados = [];
         $servicios_finalizados = [];
 
@@ -50,8 +51,10 @@ class AnalizarListener
                     array_push($servicios_iniciados, $servicio);                 
                 }
             }
+            
             if(!$servicio['finalizado']){
-                if(Carbon::now()->getTimestamp() > strtotime($servicio['term_servi'])){
+                if(Carbon::now()->getTimestamp() > (strtotime($servicio['term_servi']) + $minutos))
+                {
                     $servicio['finalizado'] = true;
                     $servicio['procesar'] = true;
 

@@ -1,6 +1,6 @@
 <div class="panel">    
     <div class="panel-heading bg-blue">
-        <h1 class="panel-title">Formulario de Registro</h1>
+        <h1 class="panel-title">Formulario de Edicion</h1>
     </div>
 
     <div class="panel-body">

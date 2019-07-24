@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 
-use App\Modelos\Vistas\ViewListarServicios;
 use App\Modelos\Vistas\ViewListarProgramadas;
-use App\Modelos\Vistas\ViewListarMoviles;
 use App\Modelos\Vistas\ViewListarPropietarios;
 use App\Modelos\Vistas\ViewListarExpediciones;
+
+use App\Modelos\Vistas\ViewListarServicios;
+use App\Modelos\DBServicios\ViewServicios;
+use App\Modelos\Vistas\ViewListarMoviles;
+use App\Modelos\DBGestra\ViewMoviles;
 
 use App\Modelos\Expedicion;
 
@@ -79,7 +82,7 @@ class InformesController extends Controller
                     get();
 
 
-        $misMoviles = ViewListarMoviles::
+        $misMoviles = ViewMoviles::
                     where('docu_empre', $docu_empre)->
                     where('docu_perso', $docu_perso)->
                     get();
@@ -96,7 +99,7 @@ class InformesController extends Controller
             $desde = strtotime(date("Y-n-j", strtotime("first day of this month")));
             $hasta = strtotime(date("Y-n-j", strtotime("last day of this month")));
             
-            $losServicios = ViewListarServicios::
+            $losServicios = ViewServicios::
                         where('nume_movil', $nume_movil)->
                         where('pate_movil', $pate_movil)->
                         whereBetween('codi_servi', [$desde, $hasta])->
@@ -118,7 +121,7 @@ class InformesController extends Controller
 
     public function miServicio($codi_circu, $codi_servi)
     {
-        $miServicio = ViewListarServicios::
+        $miServicio = ViewServicios::
                     where('codi_servi', $codi_servi)->
                     where('codi_circu', $codi_circu)->
                     get();
@@ -128,7 +131,7 @@ class InformesController extends Controller
                         where('codi_servi', $codi_servi)->
                         where('codi_circu', $codi_circu)->
                         get();
-            $tuServicio = ViewListarServicios::
+            $tuServicio = ViewServicios::
                         where('codi_servi', $miServicio[0]['serv_anter'])->
                         where('codi_circu', $codi_circu)->
                         get();

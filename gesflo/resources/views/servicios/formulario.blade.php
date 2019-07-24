@@ -16,8 +16,7 @@
     <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Agregar
   </button>
 
-  <!--<button type="button" data-toggle="modal" data-target="#modal_procesar" class="btn btn-warning" id="btnProcesar">-->
-  <button type="button" class="btn btn-warning" id="btnProcesar">
-    <span class="glyphicon glyphicon-retweet" aria-hidden="true"></span> Procesar
+  <button type="button" class="btn btn-info"  id="btnAnalizar">
+    <span class="glyphicon glyphicon-retweet" aria-hidden="true"></span> Analizar
   </button>
 </div>

@@ -7,12 +7,11 @@
 <div class="row">
 	<div class="panel panel-primary">    
 		<div class="panel-heading text-center">
-			<h1 class="panel-title">Mi Flota</h1>
+			<b class="panel-title">Mi Flota</b>
 		</div>
 
 		<div class="panel-body">
 			<div class="media">
-
 				<div class="media-left media-top">
 					<img src="{{{ asset('img/avatar1.png') }}}" class="media-object" style="width:60px">
 				</div>
@@ -36,7 +35,6 @@
 				<ul class="nav nav-pills nav-justified" role="tablist">
 					<li role="presentation" class="active"><a href="#tabMisMoviles" aria-controls="tabMisMoviles" role="tab" data-toggle="tab">Mis Moviles</a></li>
 					<li role="presentation"><a href="#tabLosServicios" aria-controls="tabLosServicios" role="tab" data-toggle="tab">Servicios del Mes</a></li>
-				
 				</ul>
 			</div>
 
@@ -54,15 +52,8 @@
 				</div>
 
 				<!-- PANEL 002 -->
-				<div role="tabpanel" class="tab-pane fade active in" id="tabMisMoviles">
-						
+				<div role="tabpanel" class="tab-pane fade active in" id="tabMisMoviles">						
 						@include('informes.miFlota.localizacionMoviles')
-				</div>
-				
-				
-				<!-- PANEL 002 -->
-				<div role="tabpanel" class="tab-pane fade" id="tabTrayecto">
-					<div id="divGMap"></div>
 				</div>
 			</div>
 		</div>

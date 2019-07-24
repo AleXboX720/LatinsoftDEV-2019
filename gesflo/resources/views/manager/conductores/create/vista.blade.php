@@ -6,7 +6,7 @@
 	<div class="alert" id="alert"></div>
 	
 	<div class="row">
-		{!! Form::open(['route' => 'conductores.store', 'method' => 'POST', 'id' => 'frmAgregar']) !!}
+		{!! Form::open(['route' => 'conductores.guardar', 'method' => 'POST', 'id' => 'frmAgregar']) !!}
 			<div class="col-md-12">
 				@include('manager.conductores.create.panelPrincipal')
 			</div>

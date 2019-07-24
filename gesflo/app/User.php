@@ -33,4 +33,16 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+
+
+    public function activarUsuario($docu_perso)
+    {
+        $usuario = User::where('docu_perso', $docu_perso)->
+        update([
+            'activo' => true,
+            'online' => false
+        ]);
+        return $usuario;
+    }
 }

@@ -10,7 +10,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>{{ config('app.name', 'APP') }}</title>
+  <title>{{ config('app.name', 'APP') }} LS - (Version {{ config('app.version', 'X') }})</title>
   <link rel="icon" href="{{{ asset('img/favicon.ico') }}}" type="image/ico">
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -24,7 +24,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <!-- AdminLTE Skins. We have chosen the skin-blue for this starter
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect. -->
-  <link rel="stylesheet" href="{{{ asset('adminlte/css/skins/skin-red.min.css') }}}">
+  <link rel="stylesheet" href="{{{ asset('adminlte/css/skins/skin-blue.min.css') }}}">
 
   <link rel="stylesheet" href="{{{ asset('adminlte/css/myStile.css') }}}">
 
@@ -62,7 +62,7 @@ desired effect
 |               | sidebar-mini                            |
 |---------------------------------------------------------|
 -->
-<body class="hold-transition skin-red sidebar-mini">
+<body class="hold-transition skin-blue sidebar-mini">
 <div class="wrapper">
     @include('admin.navbar.top')
     @include('admin.navbar.left')
@@ -71,6 +71,7 @@ desired effect
     <section class="content-header">
       <h1>
         @yield('title') <small>@yield('subtitle')</small>
+      @yield('cabecera_adicional')
       </h1>
     </section>
     <!-- Main content -->

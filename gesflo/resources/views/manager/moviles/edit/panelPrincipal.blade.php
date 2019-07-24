@@ -1,4 +1,4 @@
-<div class="panel panel-red">
+<div class="panel">
     <div class="panel-heading bg-green">
         <h1 class="panel-title">Formulario de Edicion</h1>
     </div>
@@ -14,7 +14,7 @@
         <div class="tab-content">
             <!-- PANEL 001 -->
             <div role="tabpanel" class="tab-pane fade active in" id="tabDatosMovil">                
-                @include('manager.moviles.edit.frmDatosMovil')                
+                @include('manager.moviles.edit.frmDatosMovil')
             </div>
             <!-- PANEL 002 -->
             <div role="tabpanel" class="tab-pane fade" id="tabAyuda">

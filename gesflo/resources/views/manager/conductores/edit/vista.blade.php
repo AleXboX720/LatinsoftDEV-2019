@@ -6,7 +6,7 @@
     <div class="alert" id="alert"></div>
     
 	<div class="row">
-		{!! Form::open(['route' => ['conductores.update', $data['objPersona'][0]->docu_perso], 'method' => 'PUT', 'id' => 'frmEditar']) !!}
+		{!! Form::open(['route' => ['conductores.actualizar'], 'method' => 'POST', 'id' => 'frmEditar']) !!}
 			<div class="col-md-12">
 				@include('manager.conductores.edit.panelPrincipal')
 			</div>

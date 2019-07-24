@@ -1,11 +1,13 @@
 <!-- Main Header -->
 <header class="main-header">
   <!-- Logo -->
-  <a href="http://latinsoft.cl/avl2" class="logo">
+  <a href="http://latinsoft.cl" class="logo">
     <!-- mini logo for sidebar mini 50x50 pixels -->
     <span class="logo-mini"><b>LS</b></span>
     <!-- logo for regular state and mobile devices -->
-    <span class="logo-lg"><b>{{ config('app.name', 'APP') }}</b></span>
+    <span class="logo-lg">
+      <b>{{ config('app.name', 'APP') }} LS</b>
+    </span>
   </a>
 
   <!-- Header Navbar -->
@@ -37,7 +39,7 @@
                       @if(Auth::user()->foto_perfil !== NULL)
                         <img src="{{{ asset('adminlte/img') }}}/{{ Auth::user()->foto_perfil }}" class="img-circle" alt="User Image">
                       @else
-                        <img src="{{{ asset('adminlte/img/female.png') }}}" class="img-circle" alt="User Image">
+                        <img src="{{{ Auth::user()->foto_perfil }}}" class="img-circle" alt="User Image">
                       @endif
                       
                     </div>
@@ -86,14 +88,15 @@
         <li class="dropdown tasks-menu">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <i class="fa fa-tasks"></i>
-            <span class="label label-success" id="total_finalizados"></span>
+            <span class="label label-success" id="total_tareas"></span>
           </a>
           <ul class="dropdown-menu">
             <li>
-              <ul class="menu">
-                <li id="listadoProcesar">
+              <ul class="menu" id="listaTareas">
+                <li id="tareasProcesar">
 
                 </li>
+                <button type="button" class="btn btn-warning btn-block" id="btnProcesar" disabled="disabled"><span class="glyphicon glyphicon-retweet" aria-hidden="true"></span> Procesar</button>
               </ul>
             </li>
           </ul>

@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Manager;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-use App\Modelos\Vistas\ViewListarPropietarios;
+use App\Modelos\DBGestra\ViewPropietarios;
+use App\Modelos\DBGestra\Propietario;
 
 use App\Modelos\Persona;
 use App\Modelos\Domicilio;
 use App\Modelos\Contacto;
-use App\Modelos\Propietario;
 use App\Modelos\Movil;
 
 
@@ -23,7 +23,7 @@ class PropietariosController extends Controller
             'title'     => 'Manager',
             'subtitle'  => 'Propietarios',
             'buscare'   => 'apel_pater',
-            'listado'   => ViewListarPropietarios::where('docu_empre', $this->_docu_empre)->paginate(11)
+            'listado'   => ViewPropietarios::where('docu_empre', $this->_docu_empre)->paginate(11)
         ];
         return view('manager.propietarios.vista', compact('data'));
     }
@@ -69,7 +69,7 @@ class PropietariosController extends Controller
     public function show(Request $request)
     {
         try{
-            $propietario = ViewListarPropietarios::where('docu_perso', $request->docu_perso)
+            $propietario = ViewPropietarios::where('docu_perso', $request->docu_perso)
                     ->where('docu_empre', $this->_docu_empre)
                     ->get();            
             
@@ -93,7 +93,7 @@ class PropietariosController extends Controller
     {
         if($request->ajax()){
             try{                
-                $listado = ViewListarPropietarios::where('docu_empre', $this->_docu_empre)->get();
+                $listado = ViewPropietarios::where('docu_empre', $this->_docu_empre)->get();
                 if(!$listado){
                     return response()->json(['NO SE ENCONTRARON PROPIETARIOS!!!'], 404);
                 } else {            
@@ -109,7 +109,7 @@ class PropietariosController extends Controller
     {
         try{
             $apel_pater = $request->apel_pater;
-            $listado = ViewListarPropietarios::where('apel_pater', 'LIKE', "%$apel_pater%")->where('docu_empre', $this->_docu_empre)->get();
+            $listado = ViewPropietarios::where('apel_pater', 'LIKE', "%$apel_pater%")->where('docu_empre', $this->_docu_empre)->get();
             
             if(count($listado->toArray()) <= 0){
                 return response()->json(['NO SE ENCONTRARON PROPIETARIOS!!!'], 404);

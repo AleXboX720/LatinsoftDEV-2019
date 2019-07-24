@@ -34,5 +34,4 @@
 	<p>
 	    Sin olvidarnos de entregarles las mas recientes de las tecnologias de una forma simple e integra.
 	</p>
-
-@endsection()
+@endsection

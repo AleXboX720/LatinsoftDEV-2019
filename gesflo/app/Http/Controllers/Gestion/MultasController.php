@@ -96,7 +96,7 @@ class MultasController extends Controller
 			{
 				$boleta_pagar = new PagosController;
 				$boleta_pagar->imprimir($servicio, $multas, $nota_pago);
-				//$boleta_pagar->imprimirVouche($servicio, $multas, $nota_pago);
+				$boleta_pagar->imprimirVouche($servicio, $multas, $nota_pago);
             }
             \DB::commit();
         }

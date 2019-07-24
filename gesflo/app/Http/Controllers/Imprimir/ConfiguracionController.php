@@ -29,7 +29,7 @@ class ConfiguracionController extends Controller
 	public function lineaSeparacion2(Printer $printer)
 	{
 		$printer->selectPrintMode(Printer::MODE_FONT_B);
-		$printer->text("========================================================\n");
+		$printer->text("================================================================\n");
 		$printer->selectPrintMode();
 	}
 	

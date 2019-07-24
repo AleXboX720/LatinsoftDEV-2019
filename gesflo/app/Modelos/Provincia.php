@@ -13,13 +13,17 @@ class Provincia extends Model
 	protected $relations = ['tb_comunas'];
 	protected $fillable = ['idde_ciuda', 'nomb_provi', 'abre_provi', 'idde_pais'];
 
-	/*	RELACIONES	*/
-	public function comunas(){
-		return $this->hasMany('App\Modelos\Comuna');
-	}
-	/*
-	public function pais(){
-		return $this->belongsTo('App\Modelos\Pais');
-	}
-	*/
+	public static function _listar()
+    {
+        try
+        {
+            $listado = Provincia::orderBy('nomb_provi', 'ASC')
+                ->pluck('nomb_provi', 'idde_provi')
+                ->all();
+
+            return $listado; 
+        } catch (\Exception $e){
+            return response('Algo salio mal...!!!', 500);
+        }
+    }
 }

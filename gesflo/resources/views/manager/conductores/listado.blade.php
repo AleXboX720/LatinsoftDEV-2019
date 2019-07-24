@@ -17,12 +17,9 @@
                     <th class="text-center">E-Mail</th>
                 </tr>
             </thead>
-            <tbody id="tablaListadoPersonas">
+            <tbody id="listadoConductores">
                
             </tbody>
         </table>
-        
-        {!! Form::open(['route' => ['conductores.destroy', ':IDDE_OBJET'], 'method' => 'DELETE', 'id' => 'frmEliminar']) !!}
-        {!! Form::close() !!}
     </div>
 </div>

@@ -1,49 +1,43 @@
-var objConductor = null;
 var diasVencimientoLicConducir = 5;
 
 /*###################################################################################################*/
+$(document).ready(function(){
+  $('#codi_licen').keypress(function(e){
+    if(e.which == 13){
+      var codi_licen = $('#codi_licen').val();
+      _busquedaConductor(codi_licen);
+   }
+  });
+});
+
+function _busquedaConductor(codi_licen)
+{
+  var busqueda = buscarConductor(codi_licen);
+  busqueda.done(function(data, textStatus, jqXHR){
+    var conductor = data.conductor;
+
+    var fech_vencimiento = new Date(conductor.fech_venci);
+    fech_vencimiento = fech_vencimiento.toISOString().slice(0,10);
+    verificarLicencia(conductor, data.dias, fech_vencimiento);
+  });
+
+}
+/*###################################################################################################*/
+
 function buscarConductor(codi_licen){
   var parametros = {'codi_licen' : codi_licen};
 
+  var token = document.getElementsByName("_token");
   var url = 'servicios/buscar/conductor';
-  var token = document.getElementsByName('_token');
-  $.ajax({
+  return $.ajax({
     url: url,
-    headers : {'X-CSRF-TOKEN' : token[0].value},
     type: 'POST',
+    headers : {'X-CSRF-TOKEN' : token[0].value},
     data: parametros,
-    dataType: 'json',
-    beforeSend: function(){
-      limpiarCamposConductor();
-    },
-    error: function(){
-      console.log('Lamentablemente Hay un Error de Coneccion, Intentelo Mas Tarde!!!');
-    }
+    dataType: 'json'
   })
-  .done(function(data, textStatus, jqXHR ){
-    objConductor = data.conductor[0];
+  .done(function(data, textStatus, jqXHR){
 
-    var fech_vencimiento = new Date(objConductor.fech_venci);
-    fech_vencimiento = fech_vencimiento.toISOString().slice(0,10);
-    if(data.dias <= 0){
-      alert('NOTA: \nCONDUCTOR CON LIC. CONDUCIR VENCIDA \n\n(FECHA: ' +fech_vencimiento+ ')');
-      $('#btnGuardar').prop('disabled', true);
-      $('#codi_licen').focus();
-      $('#codi_licen').select();
-    } else {
-      if(data.dias <= diasVencimientoLicConducir){
-        alert('NOTA: \nLA LIC. CONDUCIR VENCERA EL "' +fech_vencimiento+ '" \n\n(' +data.dias+ ' dias restantes)');
-      }
-      $('#docu_perso').val(objConductor.docu_perso);
-      $('#prim_nombr').val(objConductor.prim_nombr);
-      $('#segu_nombr').val(objConductor.segu_nombr);
-      $('#apel_pater').val(objConductor.apel_pater);
-      $('#apel_mater').val(objConductor.apel_mater);
-      $('#fech_venci').val(objConductor.fech_venci);
-
-      $('#hora_servi').focus();
-      $('#btnGuardar').prop('disabled', false);
-    }
   })
   .always(function( a, textStatus, b ) {
   //TODO
@@ -60,7 +54,31 @@ function buscarConductor(codi_licen){
   });
 }
 
+function verificarLicencia(conductor, dias, fech_venci)
+{
+  if(dias <= 0){
+    alert('NOTA: \nCONDUCTOR CON LIC. CONDUCIR VENCIDA \n\n(FECHA: ' +fech_venci+ ')');
+    $('#btnGuardar').prop('disabled', true);
+    $('#codi_licen').focus();
+    $('#codi_licen').select();
+  } else {
+    if(dias <= diasVencimientoLicConducir){
+      alert('NOTA: \nLA LIC. CONDUCIR VENCERA EL "' +fech_venci+ '" \n\n(' +dias+ ' dias restantes)');
+    }
+    $('#docu_condu').val(conductor.docu_perso);
+    $('#prim_nombr').val(conductor.prim_nombr);
+    $('#segu_nombr').val(conductor.segu_nombr);
+    $('#apel_pater').val(conductor.apel_pater);
+    $('#apel_mater').val(conductor.apel_mater);
+    $('#fech_venci').val(conductor.fech_venci);
+
+    $('#hora_servi').focus();
+    $('#btnGuardar').prop('disabled', false);
+  }
+}
+
 function limpiarCamposConductor(){
+  $('#codi_licen').val('');
   $('#docu_perso').val('');
   $('#prim_nombr').val('');
   $('#segu_nombr').val('');

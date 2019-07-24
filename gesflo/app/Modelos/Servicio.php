@@ -34,7 +34,6 @@ class Servicio extends Model
     public static function _crear($servicio)
 	{
         $obj = new Servicio($servicio);
-        //Servicio::_crear($obj);
 		Servicio::create([
             'codi_servi' => $obj->codi_servi,
             'codi_circu' => $obj->codi_circu,
@@ -49,4 +48,5 @@ class Servicio extends Model
 			'user_modif' => \Auth::user()->docu_perso
         ]);
 	}
+
 }

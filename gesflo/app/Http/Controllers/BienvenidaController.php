@@ -13,7 +13,7 @@ class BienvenidaController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        //$this->middleware('auth');
     }
 
     /**
@@ -26,7 +26,7 @@ class BienvenidaController extends Controller
         $data = 
         [
             'title'     => 'Bienvenidos a ',
-            'subtitle'  => 'Gestra v2018.2'
+            'subtitle'  => config('app.name', 'APP') .' '. config('app.version', 'X')
         ];
 
         return view('bienvenida', compact('data'));

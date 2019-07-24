@@ -1,11 +1,11 @@
 <div class="panel-group" id="lstFlota" role="tablist" aria-multiselectable="true">
   <div class="panel panel-green">
     <div class="panel-heading text-center" role="tab" id="head{{$movil->pate_movil}}">
-      <b class="panel-title">
+      <h1 class="panel-title">
         <a class="collapsed" role="button" data-toggle="collapse" data-parent="#lstFlota" href="#info{{$movil->pate_movil}}" aria-expanded="false" aria-controls="info{{$movil->pate_movil}}">
           Movil: {{ $movil->nume_movil }} - Patente: {{ $movil->pate_movil }}
         </a>
-      </b>
+      </h1>
     </div>
 
     <div style="height:300px; overflow-y:scroll;" id="info{{$movil->pate_movil}}" class="panel-collapse collapse " role="tabpanel" aria-labelledby="head{{$movil->pate_movil}}">

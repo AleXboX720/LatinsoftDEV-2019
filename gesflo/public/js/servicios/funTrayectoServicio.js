@@ -8,6 +8,7 @@ var lstBurbujas = [];
 
 var viajeDetenido;
 
+
 $(document).ready(function(){
   $('.btnIda').click(function(){
     var sent_exped = 0;
@@ -26,10 +27,8 @@ $(document).ready(function(){
 
 function _crearRuta(codi_senti, clr){
   limpiarListados();
-  //var expediciones = objInformeServicio.expediciones;
-  //var codi_equip = objInformeServicio.servicio[0].codi_equip;
-
-  var mi_servicio = objInformeServicio.mi_servicio;
+  
+  var mi_servicio = objeto_servicio.mi_servicio;
   var servicio = mi_servicio.servicio;
   var expediciones = mi_servicio.expediciones;
   var codi_equip = servicio.codi_equip;
@@ -38,9 +37,10 @@ function _crearRuta(codi_senti, clr){
     if(obj.codi_senti == codi_senti){
       var desde = new Date(obj.inic_exped).getTime()/1000;
       var hasta = new Date(obj.term_exped).getTime()/1000;
-      var url = definirUrl(codi_equip, desde, hasta);
+      var adicional = 20 * 60;
+      var url = definirUrl(codi_equip, desde, hasta + adicional);
 
-      listarEventos(url, clr, codi_equip);
+      _listarEventos(url, clr, codi_equip);
       if(lstRutas.length > 0){
         _agregarRutas();
       }
@@ -48,19 +48,19 @@ function _crearRuta(codi_senti, clr){
   });
 }
 
-function _definirRuta(listado, clr, codi_equip){
-  var confiRuta = configurarRutaXXX(listado, clr);
+function _definirRutaTrayecto(listado, clr, codi_equip){
+  var confiRuta = _configurarRutaTrayecto(listado, clr);
   var laRuta = new google.maps.Polyline(confiRuta);
   
   //lstRutas[codi_equip] = laRuta;
   lstRutas.push(laRuta);
 }
 
-function configurarRutaXXX(listado, clr){
+function _configurarRutaTrayecto(listado, clr){
   return {
     map: elMapa,
     path: listado,
-    clickable: true,
+    clickable: false,
     draggable: false,
     editable: false,
     geodesic: true,
@@ -74,13 +74,11 @@ function configurarRutaXXX(listado, clr){
 }
 
 function definirUrl(d, i, f){
-  return 'http://localhost/api/trackers/tpublico/antofagasta/linea104/trayectoTracker?idde_devic=' +d+ '&inicio=' +i+ '&fin=' +f;
-  //return 'http://www.latinsoft.cl/api/trackers/tpublico/antofagasta/linea104/trayectoTracker?idde_devic=' +d+ '&inicio=' +i+ '&fin=' +f;
+  //return 'http://localhost/api/trackers/tpublico/antofagasta/linea104/trayectoTracker?idde_devic=' +d+ '&inicio=' +i+ '&fin=' +f;
+  return 'http://www.latinsoft.cl/api/trackers/tpublico/antofagasta/linea104/trayectoTracker?idde_devic=' +d+ '&inicio=' +i+ '&fin=' +f;
 }
 
-function listarEventos(url, clr, codi_equip){
-  //var mensajeCargando = $('#divCargando');
-
+function _listarEventos(url, clr, codi_equip){
   $.ajax({
     url: url,
     type: 'POST',
@@ -102,7 +100,7 @@ function listarEventos(url, clr, codi_equip){
 
         $("#btnRango").attr("min", 0);
         $("#btnRango").attr("max", lstCoordenadas.length - 1);
-        _definirRuta(lstCoordenadas, clr, codi_equip);
+        _definirRutaTrayecto(lstCoordenadas, clr, codi_equip);
         elMapa.fitBounds(bounds);
       }
     }
@@ -207,7 +205,6 @@ $(document).ready(function(){
       iniciarRecorrido(lstEventos);
       viajeDetenido = false;
     }
-
   });
 });
 
@@ -220,34 +217,36 @@ $(document).ready(function(){
     var elMarker = null;
     var laBurbuja = null;
     var pos = new google.maps.LatLng(lstEventos[valor].Latitud, lstEventos[valor].Longitud);
-    var grd = _getGradoMarker(parseInt(lstEventos[valor].Heading));
+    var hor = lstEventos[valor].Hora;
     var spd = parseInt(lstEventos[valor].Velocidad);
     var clr = _getColorMarker(spd);
+    var cod = lstEventos[valor].STAT_CODE;
+    var geo = null;
 
+    var grd = null;
+    if(lstEventos[valor].Heading !== undefined){
+      grd = parseInt(lstEventos[valor].Heading);
+      _getGradoMarker(grd);
+    }
+    if(lstEventos[valor].NombreGZ){
+      geo = lstEventos[valor].NombreGZ;
+    }
 
-    var ultimaPosicion = null;
     var laConfig = configurarMarker(pos, grd, spd, clr, 'movil');
     elMarker = new google.maps.Marker(laConfig);
     laBurbuja = new google.maps.InfoWindow();
 
-    //elMarker.setMap(elMapa);
     lstMarkers.push(elMarker);
     lstBurbujas.push(laBurbuja);
-
-    _agregarMarkers();      
-    _agregarBurbujas();
     cambiarZoom(15);
-
     centrarMapa(elMarker);
-    actualizarBurbuja(elMarker, laBurbuja, spd);
-    laBurbuja.open(elMapa, elMarker);
 
-    //console.clear();
-    //console.dir(lstEventos[valor]);
-    //$('#tiempo').html('GRADOS: '+ lstEventos[valor].Heading);
-    $('#tiempo').html('HORA: '+ lstEventos[valor].Hora);
-    
+    var configuracionMarker = _configurarIcono(grd, spd, clr);
+    actualizarMarker(elMarker, laBurbuja, pos, configuracionMarker);
+    var infoBurbuja = _contenidoBurbuja(lstEventos[valor]);
+    actualizarBurbuja(elMarker, laBurbuja, infoBurbuja)
 
+    $('#tiempo').html('HORA: '+ hor);
   });
 });
 
@@ -292,20 +291,49 @@ function iniciarRecorrido(listado){
   });
 }
 
-function actualizarMarker(marker, laBurbuja, pos, grd, spd, clr){
-    marker.setIcon(_configurarIcono(grd, spd, clr));
+function actualizarMarker(marker, laBurbuja, pos, configuracion){
+    marker.setIcon(configuracion);
     marker.setPosition(pos);
     elMapa.panTo(pos);
-    
-    actualizarBurbuja(marker, laBurbuja, spd)
 }
 
-function actualizarBurbuja(marker, laBurbuja, spd){
-    laBurbuja.close(elMapa, marker);
-    if(spd == 0){
-       laBurbuja.setContent('<small style="color:#000;">[DETENIDO]</small>');
-    } else {
-       laBurbuja.setContent('<b>Velocidad </b><small style="color:#000;">['+ spd +' km/hrs]</small>');
-    }
-    laBurbuja.open(elMapa, marker);
+function actualizarBurbuja(marker, laBurbuja, infoBurbuja){
+  laBurbuja.close(elMapa, marker);
+  laBurbuja.setContent(infoBurbuja);
+  laBurbuja.open(elMapa, marker);
 }
+
+function _contenidoBurbuja(evento){
+  var grd = parseInt(evento.Heading);
+  var spd = parseInt(evento.Velocidad);
+  var cod = parseInt(evento.STAT_CODE);
+  var geo = evento.NombreGZ;
+  var fec = evento.Fecha;
+  var hor = evento.Hora;
+  var odo = parseInt(evento.Odometro);
+  //_getGradoMarker(grd);
+  var contenido = null;
+  if(spd == 0){
+     contenido = '<small style="color:#000;">[DETENIDO]</small>';
+  } else {
+    if(cod == 61968){
+      contenido =         
+        '<div>'+
+          '<table style="width:100%">'+
+            '<tr style="background-color:#0f254e;color:#fff;color:#fff;letter-spacing:0.2em;text-align:center;">'+
+              '<th style="padding:3px 35px;margin:1px;text-align:center;" colspan="2">'+ geo +'</th>'+
+            '</tr>'+
+            '<tr><td><b>Hora</b></td><td>: '+ hor +'</td></tr>'+
+            '<tr><td><b>Velocidad</b></td><td>: '+ spd +' km/hrs</td></tr>'+
+            '<tr><td><b>Grados</b></td><td>: '+ grd +'°</td></tr>'+
+            '<tr><td><b>Fecha</b></td><td>: '+ fec +'</td></tr>'+
+            '<tr><td><b>Odometro</b></td><td>: '+ odo +'</td></tr>'+
+          '</table>'+
+        '</div>';
+    } else {
+      contenido = '<b>Velocidad </b><small style="color:#000;">['+ spd +' km/hrs]</small>';
+    }
+  }
+  return contenido;
+}
+

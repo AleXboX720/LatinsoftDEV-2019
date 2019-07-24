@@ -1,109 +1,67 @@
 var objServicio = null;
 
+$(document).ready(function(){
+  $('#btnGuardar').click(function(e){
+    e.preventDefault();
+    guardarServicio();
+  });
+});
+
 function guardarServicio(){
-	objServicio = _definirServicio();
-	var obj = objServicio.servicio;
-
-	var existe = existeServicio(obj.codi_circu, obj.codi_servi);
-
-	existe.done(function(data, textStatus, jqXHR){
-	if(data.existe){
-		var title = 'Atencion';
-		toastr.error(data.msg, title);
-		$('#hora_servi').focus();
-
-		return;
-	} else {
-		var pendientes = serviciosPendientes(obj.codi_circu, obj.nume_movil, obj.pate_movil);
-		pendientes.done(function(data, textStatus, jqXHR){
-		if(data.pendientes){
-			var title = 'Nota';
-			toastr.warning(data.msg, title);
-			$('#nume_movil').focus();
-
-			return;
-		} else {
-			var servicio = objServicio.servicio;
-			var conductor = objServicio.conductor;
-			var movil = objServicio.movil;
-			var programadas = objServicio.programadas;
-
-			var imprimir = $('#impr_servi').prop('checked');
-			crearServicio(servicio, conductor, movil, programadas, imprimir);
-			limpiarCampos();
-		}
-		});    
-	}
-	}); 
-}
-
-function _definirServicio(){
-	var fecha_servicio = new Date($('#fech_servi').val() +' '+ $('#hora_servi').val());
-  var timestamp = Math.floor(fecha_servicio.getTime()/1000);//FORMATO TIMESTAMP
-
-  var lstProgramadas = [];
-  var minu_contr = 0;
-  var regr_servi = 0;
-  var inic_servi = timestamp;
-  var term_servi = null;
-  var codi_servi = timestamp;
-  var codi_circu = parseInt($('#codi_circu').val());
-  var codi_licen = parseInt($('#codi_licen').val());
-  var docu_perso = parseInt($('#docu_perso').val());
-  //var conductor = $('#prim_nombr').val() +' '+ $('#apel_pater').val() +' '+ $('#apel_mater').val();
-  //alert(conductor);
+  var fecha = $('#fech_servi').val();
+  var hora = $('#hora_servi').val();
+  var fech_servi = new Date(fecha +' '+ hora).toLocaleString();
+  
+  var nume_movil = parseInt($('#nume_movil').val());
   var pate_movil = $('#pate_movil').val();
   var codi_equip = parseInt($('#codi_equip').val());
-  var fech_servi = $('#fech_servi').val();
-  var hora_servi = $('#hora_servi').val();
+  var codi_circu = parseInt($('#codi_circu').val());
+  var codi_licen = parseInt($('#codi_licen').val());
+  var docu_condu = parseInt($('#docu_condu').val());
+  var impr_servi = $("#impr_servi").prop("checked");
 
-  var docu_empre = 96711420;
-  
+  var parametros = {
+    'fecha' : fecha, 'hora' : hora, 'codi_circu' : codi_circu, 
+    'nume_movil' : nume_movil, 'pate_movil' : pate_movil, 'codi_equip' : codi_equip, 
+    'codi_licen' : codi_licen, 'docu_condu' : docu_condu, 
+    'imprimir' : impr_servi
+  };
 
-  var expediciones = null;
-  var expedicionPlus = false;
+  var token = document.getElementsByName("_token");
+  var url = 'servicios/registrar';
+  $.ajax({
+    url: url,
+    type: 'POST',
+      headers : {'X-CSRF-TOKEN' : token[0].value},
+    data: parametros,
+    dataType: 'json',
+    beforeSend: function(){}
+  })
+  .done(function(data, textStatus, jqXHR){
+    limpiarCampos();
+    listarServicios();
 
-  var ulti_contr = 0;
-  $.each(lstPuntosControl, function(i, lst){
-    var sentido = lst.sentido;
-    $.each(lst.controles, function(i, obj){
-      minu_contr += Math.round(obj.minu_contr * 60);
-      obj.fech_progr = codi_servi + minu_contr;
-      obj.fecha = new Date(obj.fech_progr * 1000).toISOString().slice(0,10);
-      obj.hora = new Date(obj.fech_progr * 1000).toISOString().slice(11,16);
-      obj.codi_servi = codi_servi;
-      obj.nume_movil = objMovil.nume_movil;
-      lstProgramadas.push(obj);
 
-      if(sentido == 1 && regr_servi == 0){
-        expedicionPlus = true;
-        regr_servi = codi_servi + minu_contr;
-      }
-      ulti_contr = codi_servi + minu_contr;
-    });
+    var title = 'Felicidades';
+    toastr.success(data.msg, title);
+  })
+  .always(function( a, textStatus, b ){})
+  .fail(function( jqXHR, textStatus, errorThrown){
+    if (jqXHR.status == 500) {
+      var title = 'Nota';
+      toastr.error(jqXHR.responseJSON.msg, title);
+
+      $('#hora_servi').focus();
+      $('#hora_servi').focus();
+    }
+    if (jqXHR.status == 501) {
+      var title = 'Nota';
+      toastr.warning(jqXHR.responseJSON.msg, title);
+
+      $('#hora_servi').focus();
+      $('#hora_servi').focus();
+    }
   });
 
-
-
-  return {
-    'movil' : objMovil,
-    'conductor' : objConductor, 
-    'servicio' : 
-    {
-      'fech_servi' : fech_servi,
-      'hora_servi' : hora_servi,
-      'codi_servi' : codi_servi,
-      'nume_movil' : objMovil.nume_movil, 
-      'docu_perso' : docu_perso,
-      'codi_circu' : codi_circu,
-      'codi_licen' : codi_licen,
-      'docu_empre' : docu_empre,
-      'pate_movil' : pate_movil,
-      'codi_equip' : codi_equip,
-      'inic_servi' : inic_servi,
-      'term_servi' : ulti_contr,
-      'habilitado' : 1,
-    },
-    'programadas' : lstProgramadas
-  };
 }
+/*###################################################################################################*/
